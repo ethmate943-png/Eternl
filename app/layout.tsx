@@ -53,10 +53,10 @@ export default function RootLayout({
           theme="colored"
         />
         <Navbar />
-        {/* <ReffererProvider> */}
+        <ReffererProvider>
           {children}
 
-        {/* </ReffererProvider> */}
+        </ReffererProvider>
       </body>
     </html>
   );
