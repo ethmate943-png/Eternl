@@ -155,63 +155,83 @@ export default function SelectWalletTypeModal({
 
   return (
     <>
-      <div className="fixed inset-0 z-[60] flex items-start justify-center pt-10 sm:pt-16">
+      <div className="fixed inset-0 z-[60] flex items-center justify-center sm:items-start sm:justify-center sm:pt-16">
+        {/* Background overlay */}
         <div
           className="absolute inset-0 bg-black/60 backdrop-blur-sm"
           onClick={onClose}
         />
-        <div className="relative mx-4 w-full max-w-[860px] rounded-3xl bg-neutral-900/95 ring-1 ring-white/10 shadow-2xl overflow-hidden">
-          <div className="absolute left-6 right-6 top-0 h-[4px] bg-gradient-to-r from-pink-400 via-orange-300 to-fuchsia-500 rounded-full" />
-          <div className="px-6 sm:px-8 pt-8 pb-8">
-            <div className="flex items-start justify-between gap-4">
-              <div className="flex items-center gap-4">
-                {view === "more" && (
-                  <button
-                    onClick={() => setView("main")}
-                    className="h-10 w-10 rounded-lg bg-white/5 flex items-center justify-center ring-1 ring-white/10 text-white/90 mr-1"
-                  >
-                    ‹
-                  </button>
-                )}
-                <div>
-                  <h3 className="text-xl font-semibold text-white">
-                    {view === "main"
-                      ? "Select wallet type"
-                      : "Advanced wallet creation"}
-                  </h3>
-                  <p className="mt-2 text-white/70">
-                    {view === "main"
-                      ? "If you're a new user, create a new wallet. Connect your Ledger or import a JSON backup."
-                      : "Advanced wallet creation. Go back for common options."}
-                  </p>
-                </div>
+
+        {/* MODAL CONTAINER */}
+        <div
+          className="
+      relative mx-2 sm:mx-4 w-full 
+      max-w-[860px] 
+      sm:rounded-3xl 
+      bg-neutral-900/95 ring-1 ring-white/10 
+      shadow-2xl overflow-hidden
+      flex flex-col
+      sm:max-h-[90vh]
+      sm:overflow-y-auto
+      rounded-t-3xl sm:rounded-3xl
+      animate-[slideUp_0.25s_ease-out]
+    "
+        >
+          {/* Top gradient bar */}
+          <div className="absolute left-6 right-6 top-0 h-[4px] bg-gradient-to-r from-pink-400 via-orange-300 to-fuchsia-500 rounded-full sm:block hidden" />
+
+          {/* Header */}
+          <div className="flex items-center justify-between px-5 pt-4 pb-3 sm:px-8 sm:pt-8 sm:pb-6 border-b border-white/10">
+            <div className="flex items-center gap-3">
+              {view === "more" && (
+                <button
+                  onClick={() => setView("main")}
+                  className="h-9 w-9 rounded-lg bg-white/5 flex items-center justify-center ring-1 ring-white/10 text-white/90"
+                >
+                  ‹
+                </button>
+              )}
+              <div>
+                <h3 className="text-lg sm:text-xl font-semibold text-white">
+                  {view === "main"
+                    ? "Select wallet type"
+                    : "Advanced wallet creation"}
+                </h3>
+                <p className="hidden sm:block mt-2 text-white/70 text-sm">
+                  {view === "main"
+                    ? "If you're a new user, create a wallet, connect hardware, or import backup."
+                    : "Advanced wallet creation. Go back for common options."}
+                </p>
               </div>
-              <div className="shrink-0 mt-1 flex items-center gap-2">
-                {onBack && (
-                  <button
-                    onClick={onBack}
-                    className="h-10 px-4 rounded-lg bg-white/5 flex items-center justify-center ring-1 ring-white/10 text-white/90 hover:bg-white/8 transition"
-                  >
-                    ← Back
-                  </button>
-                )}
-                <span className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 h-10 ring-1 ring-white/10 text-white">
-                  <span className="h-5 w-5 rounded-full overflow-hidden">
-                    <img
-                      src="/brand/cardano.svg"
-                      alt="Cardano"
-                      className="h-full w-full"
-                    />
-                  </span>
-                  <span className="text-sm">Cardano mainnet</span>
+            </div>
+
+            <div className="hidden sm:flex shrink-0 items-center gap-2">
+              {onBack && (
+                <button
+                  onClick={onBack}
+                  className="h-10 px-4 rounded-lg bg-white/5 flex items-center justify-center ring-1 ring-white/10 text-white/90 hover:bg-white/8 transition"
+                >
+                  ← Back
+                </button>
+              )}
+              <span className="inline-flex items-center gap-3 rounded-full bg-white/5 px-4 h-10 ring-1 ring-white/10 text-white">
+                <span className="h-5 w-5 rounded-full overflow-hidden">
+                  <img
+                    src="/brand/cardano.svg"
+                    alt="Cardano"
+                    className="h-full w-full"
+                  />
                 </span>
-              </div>
+                <span className="text-sm">Cardano mainnet</span>
+              </span>
             </div>
-            <div className="mt-6 space-y-4">
-              {view === "main"
-                ? items.map(renderItem)
-                : moreItems.map(renderItem)}
-            </div>
+          </div>
+
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto px-5 sm:px-8 py-5 sm:py-8 space-y-3 sm:space-y-4">
+            {view === "main"
+              ? items.map(renderItem)
+              : moreItems.map(renderItem)}
           </div>
         </div>
       </div>

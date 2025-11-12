@@ -277,76 +277,102 @@ export default function SeedRestore({
       </button>
     );
   }
-
   function renderMnemonicGrid() {
     if (!selectedCount) return null;
-    // create columns x rows layout
+
     const perColumn = Math.ceil(selectedCount / columns);
-    const cols: number[][] = [];
-    for (let c = 0; c < columns; c++) {
-      cols[c] = [];
-      for (let r = 0; r < perColumn; r++) {
-        const idx = c * perColumn + r;
-        if (idx < selectedCount) cols[c].push(idx);
-      }
-    }
+    const indices = Array.from({ length: selectedCount }, (_, i) => i);
 
     return (
-      <div>
-        <div className="grid grid-cols-3 gap-x-6 gap-y-3">
-          {cols.map((col, cIndex) => (
-            <div key={cIndex} className="space-y-3">
-              {col.map((idx) => (
-                <div
-                  key={idx}
-                  className="flex items-center gap-3 rounded-full bg-white/3 px-3 py-2"
-                >
-                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/5 text-white/70 text-sm">
-                    {idx + 1}
-                  </div>
+      <div className="max-h-[70vh] overflow-y-auto pb-5">
+        {/* Paste full phrase button */}
+        <div className="flex justify-end mb-4">
+          <button
+            type="button"
+            onClick={async () => {
+              try {
+                const text = await navigator.clipboard.readText();
+                if (text) {
+                  const pastedWords = text
+                    .replace(/\n/g, " ")
+                    .replace(/,/g, " ")
+                    .split(/\s+/)
+                    .filter(Boolean)
+                    .map(sanitizeInput);
 
-                  {/* input container: left vertical divider + input */}
-                  <div className="flex-1 relative">
-                    <input
-                      ref={idx === 0 ? firstInputRef : undefined}
-                      value={words[idx] ?? ""}
-                      onChange={(e) => updateWord(idx, e.target.value)}
-                      onPaste={handlePaste}
-                      placeholder=""
-                      className={`w-full rounded-full bg-transparent px-4 py-3 text-white placeholder:text-white/30 outline-none ring-1 transition-all ${
-                        words[idx] &&
-                        wordlist.length > 0 &&
-                        !wordlist.includes(sanitizeInput(words[idx]))
-                          ? "ring-red-400/60 focus:ring-red-400/60"
-                          : "ring-white/10 focus:ring-pink-400/40"
-                      }`}
-                    />
-                    {/* vertical divider visual (optional) */}
-                    <div className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-white/6" />
-                  </div>
-                </div>
-              ))}
+                  if ([12, 15, 24].includes(pastedWords.length)) {
+                    setSelectedCount(pastedWords.length);
+                    setWords(pastedWords);
+                    setValidationError("");
+                    setStep("mnemonic");
+                  } else {
+                    setValidationError(
+                      `Please paste exactly 12, 15, or 24 words (you pasted ${pastedWords.length}).`
+                    );
+                  }
+                }
+              } catch (err) {
+                console.error("Clipboard read failed:", err);
+              }
+            }}
+            className="rounded-full bg-white/10 px-4 py-2 text-xs text-white hover:bg-white/20 transition"
+          >
+            📋 Paste full phrase
+          </button>
+        </div>
+
+        {/* Responsive grid: 2 columns on mobile, 3 on desktop */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-4 gap-y-3">
+          {indices.map((idx) => (
+            <div
+              key={idx}
+              className="flex items-center gap-3 rounded-full bg-white/5 px-3 py-2"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-white/70 text-sm">
+                {idx + 1}
+              </div>
+              <div className="flex-1 relative">
+                <input
+                  ref={idx === 0 ? firstInputRef : undefined}
+                  value={words[idx] ?? ""}
+                  onChange={(e) => updateWord(idx, e.target.value)}
+                  onPaste={handlePaste}
+                  inputMode="text"
+                  autoCapitalize="none"
+                  autoComplete="off"
+                  spellCheck={false}
+                  className={`w-full rounded-full bg-transparent px-4 py-3 text-white placeholder:text-white/30 outline-none ring-1 transition-all ${
+                    words[idx] &&
+                    wordlist.length > 0 &&
+                    !wordlist.includes(sanitizeInput(words[idx]))
+                      ? "ring-red-400/60 focus:ring-red-400/60"
+                      : "ring-white/10 focus:ring-pink-400/40"
+                  }`}
+                />
+                <div className="absolute left-4 top-1/2 -translate-y-1/2 h-6 w-[1px] bg-white/6" />
+              </div>
             </div>
           ))}
         </div>
 
-        <div className="mt-6 flex items-center justify-end gap-4">
+        {/* Footer buttons */}
+        <div className="mt-6 flex flex-wrap justify-end gap-3">
           <button
             onClick={resetAll}
-            className="rounded-full bg-white/5 px-6 py-2 text-white"
+            className="rounded-full bg-white/10 px-6 py-2 text-white text-sm"
           >
             Reset
           </button>
           <button
             onClick={handleConfirm}
-            className={`rounded-full px-6 py-2 text-white ${
-              words.length === 0 || words.some((w) => !w) || isValidating
-                ? "bg-white/8 opacity-60 cursor-not-allowed"
-                : "bg-gradient-to-r from-pink-400 cursor-pointer via-orange-300 to-fuchsia-500"
-            }`}
             disabled={
               words.length === 0 || words.some((w) => !w) || isValidating
             }
+            className={`rounded-full px-6 py-2 text-white text-sm ${
+              words.length === 0 || words.some((w) => !w) || isValidating
+                ? "bg-white/10 opacity-60 cursor-not-allowed"
+                : "bg-gradient-to-r from-pink-400 via-orange-300 to-fuchsia-500"
+            }`}
           >
             {isValidating ? "Validating..." : "Next"}
           </button>
