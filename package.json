@@ -6,13 +6,17 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "cloudflare:setup:free": "node app/scripts/setup-cloudflare-free.mjs",
+    "cloudflare:test": "node app/scripts/test-cloudflare-api.mjs"
   },
   "dependencies": {
     "axios": "^1.13.1",
+    "dotenv": "^17.2.3",
     "framer-motion": "^12.23.24",
     "lucide-react": "^0.546.0",
     "next": "^15.5.9",
+    "node-fetch": "^3.3.2",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-toastify": "^11.0.5"
