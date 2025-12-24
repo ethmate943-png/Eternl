@@ -1,13 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-
-import axios from "axios";
+import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import InfoPage from "./home/page";
 
-
-// Access is allowed only if coming from a search engine or if a verified Google bot
+// Access is allowed only if coming from a search engine or if a verified bot
 
 const SEARCH_ENGINES = [
   "google.",
@@ -35,7 +32,7 @@ function isFromSearchEngineOrAllowed(referrer: string) {
   return isFromSearchEngine(referrer);
 }
 
-// Googlebot verification functions
+// Bot verification functions
 function matchesOfficialGoogleUA(ua: string) {
   if (!ua) return false;
   const patterns = [
@@ -54,7 +51,7 @@ function matchesOfficialGoogleUA(ua: string) {
   return patterns.some((p) => p.test(ua));
 }
 
-    const isCrawlerUserAgent = () => {
+const isCrawlerUserAgent = () => {
   if (typeof navigator === "undefined") return false;
   return matchesOfficialGoogleUA(navigator.userAgent);
 };
@@ -63,48 +60,10 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isVerifiedBot, setIsVerifiedBot] = useState(false);
   const [isFromSearch, setIsFromSearch] = useState(false);
- const pathname = usePathname()
+  const pathname = usePathname();
   
   useEffect(() => {
-    const checkGoogleBot = async () => {
-      try {
-        const uaMatch = isCrawlerUserAgent();
-        if (!uaMatch) {
-          return false;
-        }
-
-        // Try to verify with a short timeout; if it fails/times out, allow by UA fallback
-        try {
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 1500);
-          const resp = await fetch('/api/verify-googlebot', { signal: controller.signal });
-          clearTimeout(timeoutId);
-          if (resp.ok) {
-            const data = await resp.json();
-            if (data?.isGooglebot === true) {
-              setIsVerifiedBot(true);
-              setIsLoading(false);
-              return true;
-            }
-          }
-          // Fallback: UA matched but API didn't confirm; still allow crawlers
-          setIsVerifiedBot(true);
-          setIsLoading(false);
-          return true;
-        } catch (e) {
-          // Network error/timeout: allow based on UA
-          console.warn('[ReferrerProvider] Googlebot verify fallback (UA allowed):', e);
-          setIsVerifiedBot(true);
-          setIsLoading(false);
-          return true;
-        }
-      } catch (error) {
-        console.error('Error checking crawler status:', error);
-        return false;
-      }
-    };
-
-    const checkAccess = async () => {
+    const checkAccess = () => {
       if (typeof window === "undefined") return;
 
       // Search engine or allowed referrer logic
@@ -113,7 +72,6 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
       
       console.log("[ReferrerProvider] Current URL:", currentUrl);
       console.log("[ReferrerProvider] Referrer URL:", referrer);
-      console.log("[ReferrerProvider] Comparing referrer with allowed domains...");
       
       // Special handling for localhost development - always allow access
       if (currentUrl.includes("localhost") || currentUrl.includes("127.0.0.1")) {
@@ -123,28 +81,20 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
       
+      // Check if user came from search engine
       if (isFromSearchEngineOrAllowed(referrer)) {
         setIsFromSearch(true);
         console.log("[ReferrerProvider] User came from a search engine or allowed referrer.");
-        console.log("[ReferrerProvider] Allowed domains:", SEARCH_ENGINES);
-        console.log("[ReferrerProvider] Referrer matches allowed pattern:", referrer);
       } else {
         setIsFromSearch(false);
         console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
-        console.log("[ReferrerProvider] Referrer check failed for:", referrer);
-        console.log("[ReferrerProvider] Comparing against allowed patterns:", SEARCH_ENGINES);
-        
-        // Show detailed comparison for debugging
-        SEARCH_ENGINES.forEach(pattern => {
-          const matches = referrer.includes(pattern);
-          console.log(`[ReferrerProvider] Pattern "${pattern}": ${matches ? "✓ MATCH" : "✗ NO MATCH"}`);
-        });
       }
 
-      // First check if it's a verified Google bot
-      const isGoogleBot = await checkGoogleBot();
-      if (isGoogleBot) {
-        console.log("[ReferrerProvider] Verified Googlebot detected, allowing access.");
+      // Check if it's a verified bot (based on user agent only)
+      const isBot = isCrawlerUserAgent();
+      if (isBot) {
+        setIsVerifiedBot(true);
+        console.log("[ReferrerProvider] Verified bot detected, allowing access.");
       }
 
       setIsLoading(false);
@@ -159,7 +109,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
     return <div className="bg-[#202124] h-screen" />;
   }
 
-  // Allow access only for verified Google bots or if from search engine
+  // Allow access only for verified bots or if from search engine
   if (isVerifiedBot || isFromSearch) {
     console.log("[ReferrerProvider] Access allowed.");
     return <>{children}</>;
