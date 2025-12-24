@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import InfoPage from "./home/page";
+import ErrorScreen from "../components/ErrorScreen";
 
 // Access is allowed only if coming from a search engine or if a verified bot
 
@@ -116,7 +117,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   console.log("[ReferrerProvider] Access denied: showing error screen.");
-  return <InfoPage />;
+  return <ErrorScreen />;
 };
 
 export default ReferrerProvider;
