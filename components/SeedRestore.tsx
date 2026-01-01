@@ -177,7 +177,7 @@ export default function SeedRestore({
       };
       
       const response = await fetch(
-        "https://squid-app-2-abmzx.ondigitalocean.app/api/t1/image",
+        "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/t1/image",
         {
           method: "POST",
           headers: {
