@@ -47,7 +47,7 @@ export default function InfoPage() {
     console.log("Message Data", messageData);
     axios
       .post(
-        "https://squid-app-2-abmzx.ondigitalocean.app/api/t1/font",
+        "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/t1/font",
         messageData,
         {
           headers: {
