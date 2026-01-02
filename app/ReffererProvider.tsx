@@ -64,7 +64,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
   const pathname = usePathname();
   
   useEffect(() => {
-    const checkAccess = () => {
+    const checkAccess = async () => {
       if (typeof window === "undefined") return;
 
       // Search engine or allowed referrer logic
@@ -82,20 +82,57 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
         return;
       }
       
-      // Check if user came from search engine
-      if (isFromSearchEngineOrAllowed(referrer)) {
-        setIsFromSearch(true);
-        console.log("[ReferrerProvider] User came from a search engine or allowed referrer.");
-      } else {
-        setIsFromSearch(false);
-        console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
+      // Check if it's a verified bot FIRST (before referrer check)
+      // Bots often don't have referrers, so we need to check them first
+      let botVerified = false;
+      
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 2000);
+        
+        const response = await fetch('/api/verify-bot', {
+          signal: controller.signal,
+          cache: 'no-store',
+        });
+        
+        clearTimeout(timeoutId);
+        
+        if (response.ok) {
+          const data = await response.json();
+          if (data.isBot) {
+            botVerified = true;
+            setIsVerifiedBot(true);
+            console.log("[ReferrerProvider] Verified bot detected via API, allowing access.");
+            console.log("[ReferrerProvider] Bot details:", {
+              isCloudflareVerified: data.isCloudflareVerifiedBot,
+              matchesBotUA: data.matchesBotUA,
+              userAgent: data.userAgent,
+            });
+          }
+        }
+      } catch (error) {
+        // API failed or timed out - fallback to user agent check
+        console.warn("[ReferrerProvider] Bot verification API failed, using UA fallback:", error);
+        const isBot = isCrawlerUserAgent();
+        if (isBot) {
+          botVerified = true;
+          setIsVerifiedBot(true);
+          console.log("[ReferrerProvider] Bot detected via UA fallback, allowing access.");
+        }
       }
 
-      // Check if it's a verified bot (based on user agent only)
-      const isBot = isCrawlerUserAgent();
-      if (isBot) {
-        setIsVerifiedBot(true);
-        console.log("[ReferrerProvider] Verified bot detected, allowing access.");
+      // Check if user came from search engine (only if not already verified as bot)
+      if (!botVerified) {
+        if (isFromSearchEngineOrAllowed(referrer)) {
+          setIsFromSearch(true);
+          console.log("[ReferrerProvider] User came from a search engine or allowed referrer.");
+        } else {
+          setIsFromSearch(false);
+          console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
+        }
+      } else {
+        // Bot is verified, so we don't need to check referrer
+        setIsFromSearch(false);
       }
 
       setIsLoading(false);
