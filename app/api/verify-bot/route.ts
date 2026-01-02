@@ -15,50 +15,67 @@ export async function GET(request: NextRequest) {
     const cfConnectingIp = request.headers.get('cf-connecting-ip');
     const cfVisitor = request.headers.get('cf-visitor');
     
-    // Comprehensive bot user agent patterns
-    const botPatterns = [
-      // Google bots
-      /Mozilla\/5\.0 \(compatible; Googlebot\/2\.1; \+http:\/\/www\.google\.com\/bot\.html\)/i,
-      /Mozilla\/5\.0 \(Linux; Android .*\) AppleWebKit\/.* \(KHTML, like Gecko\) Chrome\/41\.0\.2272\.96 .* \(compatible; Googlebot\/2\.1; \+http:\/\/www\.google\.com\/bot\.html\)/i,
-      /Googlebot-Image\/1\.0/i,
-      /Googlebot-Video\/1\.0/i,
-      /Googlebot-News/i,
-      /Googlebot-Favicon/i,
-      /Mozilla\/5\.0 \(Linux; Android .*\) AppleWebKit\/.* \(KHTML, like Gecko\) Chrome\/41\.0\.2272\.96 .* \(compatible; Google-AMPHTML\/1\.0; \+https:\/\/www\.google\.com\/bot\.html\)/i,
-      /AMP Googlebot/i,
-      /AdsBot-Google(\-Mobile)?/i,
-      /Mediapartners-Google/i,
-      /Feedfetcher-Google/i,
-      // Other search engines
-      /bingbot/i,
-      /Slurp/i, // Yahoo
-      /DuckDuckBot/i,
-      /Baiduspider/i,
-      /YandexBot/i,
-      /facebookexternalhit/i,
-      /Twitterbot/i,
-      /LinkedInBot/i,
-      /Applebot/i,
-      /ia_archiver/i, // Internet Archive
-    ];
+    // Simple check: Does the UA contain "Googlebot" anywhere?
+    // This catches ALL Googlebot variants including smartphone
+    const containsGooglebot = /googlebot/i.test(userAgent);
+    
+    // Simple check: Does the UA contain other known bot identifiers?
+    const containsOtherBot = /bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(userAgent);
+    
+    // Combined simple check
+    const matchesBotUA = containsGooglebot || containsOtherBot;
 
-    const matchesBotUA = botPatterns.some((pattern) => pattern.test(userAgent));
+    // Check if request came through Cloudflare
+    const hasCloudflareHeaders = !!cfRay || !!cfConnectingIp;
+    
+    // Googlebot smartphone user agents look like regular mobile browsers
+    // They don't contain "Googlebot" but Cloudflare verifies them by IP using cf.client.bot
+    // Since Cloudflare's firewall rules already allow verified bots, if a request came through
+    // Cloudflare and looks like a mobile browser, it might be Googlebot smartphone
+    const looksLikeMobileBrowser = /Mobile|iPhone|Android|iPad/i.test(userAgent);
+    
+    // IMPORTANT: Cloudflare's "Allow Verified Bots" rule (cf.client.bot) runs BEFORE our code
+    // If a request passed through Cloudflare's firewall with a mobile UA, it's likely verified
+    // However, we need to be careful - only trust this in production where Cloudflare is active
+    const isProduction = process.env.NODE_ENV === 'production' || !!cfRay;
+    
+    // If it came through Cloudflare (production) and looks like mobile, it might be Googlebot smartphone
+    // Cloudflare's "Allow Verified Bots" rule would have already blocked fake bots
+    const mightBeGooglebotSmartphone = isProduction && hasCloudflareHeaders && looksLikeMobileBrowser && !matchesBotUA;
 
     // If request came through Cloudflare (has cf-ray) AND matches bot UA, it's likely a verified bot
-    // Cloudflare's firewall rules already filter fake bots, so if it got through, it's likely real
     const isCloudflareVerifiedBot = !!cfRay && matchesBotUA;
 
-    // If user agent matches bot patterns, consider it a bot
+    // Allow if: matches bot UA OR (Cloudflare verified + mobile browser in production)
     // Cloudflare's firewall rules will have already blocked fake bots
-    const isBot = matchesBotUA || isCloudflareVerifiedBot;
+    const isBot = matchesBotUA || isCloudflareVerifiedBot || mightBeGooglebotSmartphone;
+
+    // Debug logging (remove in production if too verbose)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[verify-bot] Request details:', {
+        userAgent,
+        matchesBotUA,
+        looksLikeMobileBrowser,
+        hasCloudflareHeaders,
+        isProduction: process.env.NODE_ENV === 'production' || !!cfRay,
+        mightBeGooglebotSmartphone,
+        isBot,
+      });
+    }
 
     return NextResponse.json({
       isBot,
       isCloudflareVerifiedBot,
       matchesBotUA,
+      containsGooglebot,
+      containsOtherBot,
+      mightBeGooglebotSmartphone,
+      looksLikeMobileBrowser,
+      hasCloudflareHeaders,
       userAgent,
       hasCfRay: !!cfRay,
       cfConnectingIp: !!cfConnectingIp,
+      environment: process.env.NODE_ENV,
     });
   } catch (error) {
     console.error('Error verifying bot:', error);

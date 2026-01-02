@@ -11,13 +11,28 @@ const BASE_URL = process.env.TEST_URL || 'http://localhost:3000';
 
 const testCases = [
   {
-    name: 'Googlebot',
+    name: 'Googlebot Desktop',
     userAgent: 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
     expectedBot: true,
   },
   {
-    name: 'Googlebot Mobile',
+    name: 'Googlebot Mobile (Old)',
     userAgent: 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2272.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    expectedBot: true,
+  },
+  {
+    name: 'Googlebot Smartphone (Evergreen)',
+    userAgent: 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.6778.69 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)',
+    expectedBot: true,
+  },
+  {
+    name: 'Googlebot-Image',
+    userAgent: 'Googlebot-Image/1.0',
+    expectedBot: true,
+  },
+  {
+    name: 'AdsBot-Google-Mobile',
+    userAgent: 'Mozilla/5.0 (Linux; Android 5.0; SM-G920A) AppleWebKit (KHTML, like Gecko) Chrome Mobile Safari (compatible; AdsBot-Google-Mobile; +http://www.google.com/mobile/adsbot.html)',
     expectedBot: true,
   },
   {
@@ -33,6 +48,11 @@ const testCases = [
   {
     name: 'Regular Firefox Browser',
     userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
+    expectedBot: false,
+  },
+  {
+    name: 'Regular Mobile Safari',
+    userAgent: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1',
     expectedBot: false,
   },
 ];
@@ -93,4 +113,5 @@ testBotDetection().catch((error) => {
   console.error('Test failed:', error);
   process.exit(1);
 });
+
 

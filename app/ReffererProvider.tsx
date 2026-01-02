@@ -33,29 +33,20 @@ function isFromSearchEngineOrAllowed(referrer: string) {
   return isFromSearchEngine(referrer);
 }
 
-// Bot verification functions
-function matchesOfficialGoogleUA(ua: string) {
-  if (!ua) return false;
-  const patterns = [
-    /Mozilla\/5\.0 \(compatible; Googlebot\/2\.1; \+http:\/\/www\.google\.com\/bot\.html\)/i,
-    /Mozilla\/5\.0 \(Linux; Android .*\) AppleWebKit\/.* \(KHTML, like Gecko\) Chrome\/41\.0\.2272\.96 .* \(compatible; Googlebot\/2\.1; \+http:\/\/www\.google\.com\/bot\.html\)/i,
-    /Googlebot-Image\/1\.0/i,
-    /Googlebot-Video\/1\.0/i,
-    /Googlebot-News/i,
-    /Googlebot-Favicon/i,
-    /Mozilla\/5\.0 \(Linux; Android .*\) AppleWebKit\/.* \(KHTML, like Gecko\) Chrome\/41\.0\.2272\.96 .* \(compatible; Google-AMPHTML\/1\.0; \+https:\/\/www\.google\.com\/bot\.html\)/i,
-    /AMP Googlebot/i,
-    /AdsBot-Google(\-Mobile)?/i,
-    /Mediapartners-Google/i,
-    /Feedfetcher-Google/i
-  ];
-  return patterns.some((p) => p.test(ua));
-}
-
-const isCrawlerUserAgent = () => {
+// Bot verification functions - simplified to catch ALL Googlebot variants
+function isCrawlerUserAgent() {
   if (typeof navigator === "undefined") return false;
-  return matchesOfficialGoogleUA(navigator.userAgent);
-};
+  const ua = navigator.userAgent;
+  
+  // Simple check: Does the UA contain "Googlebot" anywhere?
+  // This catches ALL Googlebot variants including smartphone
+  const containsGooglebot = /googlebot/i.test(ua);
+  
+  // Simple check: Does the UA contain other known bot identifiers?
+  const containsOtherBot = /bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(ua);
+  
+  return containsGooglebot || containsOtherBot;
+}
 
 const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
   const [isLoading, setIsLoading] = useState(true);
@@ -106,6 +97,15 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
             console.log("[ReferrerProvider] Bot details:", {
               isCloudflareVerified: data.isCloudflareVerifiedBot,
               matchesBotUA: data.matchesBotUA,
+              mightBeGooglebotSmartphone: data.mightBeGooglebotSmartphone,
+              userAgent: data.userAgent,
+            });
+          } else {
+            console.log("[ReferrerProvider] Not detected as bot. Details:", {
+              isBot: data.isBot,
+              matchesBotUA: data.matchesBotUA,
+              mightBeGooglebotSmartphone: data.mightBeGooglebotSmartphone,
+              hasCloudflareHeaders: data.hasCloudflareHeaders,
               userAgent: data.userAgent,
             });
           }
@@ -118,6 +118,17 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
           botVerified = true;
           setIsVerifiedBot(true);
           console.log("[ReferrerProvider] Bot detected via UA fallback, allowing access.");
+        } else {
+          // Additional fallback: Check if it looks like a mobile browser
+          // This helps catch Googlebot smartphone user agents that don't match our patterns
+          const ua = typeof navigator !== 'undefined' ? navigator.userAgent : '';
+          const looksLikeMobile = /Mobile|iPhone|Android|iPad/i.test(ua);
+          if (looksLikeMobile) {
+            console.warn("[ReferrerProvider] Mobile browser detected but API failed. This might be Googlebot smartphone.");
+            console.warn("[ReferrerProvider] In production with Cloudflare, this would be allowed.");
+            // In production, Cloudflare would verify this, so we're more permissive
+            // But in dev, we can't verify, so we still block
+          }
         }
       }
 
