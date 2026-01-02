@@ -36,8 +36,28 @@ const testCases = [
     expectedBot: true,
   },
   {
-    name: 'Bingbot',
+    name: 'Bingbot Desktop',
     userAgent: 'Mozilla/5.0 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+    expectedBot: true,
+  },
+  {
+    name: 'Bingbot Mobile',
+    userAgent: 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/W.X.Y.Z Mobile Safari/537.36 (compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm)',
+    expectedBot: true,
+  },
+  {
+    name: 'MSNBot',
+    userAgent: 'msnbot/2.0b (+http://search.msn.com/msnbot.htm)',
+    expectedBot: true,
+  },
+  {
+    name: 'BingPreview',
+    userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/534+ (KHTML, like Gecko) BingPreview/1.0b',
+    expectedBot: true,
+  },
+  {
+    name: 'AdIdxBot (Bing Ads)',
+    userAgent: 'Mozilla/5.0 (compatible; adidxbot/2.0; +http://www.bing.com/bingbot.htm)',
     expectedBot: true,
   },
   {

@@ -33,7 +33,7 @@ function isFromSearchEngineOrAllowed(referrer: string) {
   return isFromSearchEngine(referrer);
 }
 
-// Bot verification functions - simplified to catch ALL Googlebot variants
+// Bot verification functions - simplified to catch ALL bot variants
 function isCrawlerUserAgent() {
   if (typeof navigator === "undefined") return false;
   const ua = navigator.userAgent;
@@ -42,10 +42,14 @@ function isCrawlerUserAgent() {
   // This catches ALL Googlebot variants including smartphone
   const containsGooglebot = /googlebot/i.test(ua);
   
-  // Simple check: Does the UA contain other known bot identifiers?
-  const containsOtherBot = /bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(ua);
+  // Simple check: Does the UA contain "bingbot" or other Bing crawlers?
+  // This catches ALL Bingbot variants including mobile and preview
+  const containsBingbot = /bingbot|msnbot|bingpreview|adidxbot/i.test(ua);
   
-  return containsGooglebot || containsOtherBot;
+  // Simple check: Does the UA contain other known bot identifiers?
+  const containsOtherBot = /slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(ua);
+  
+  return containsGooglebot || containsBingbot || containsOtherBot;
 }
 
 const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {

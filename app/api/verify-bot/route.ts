@@ -19,11 +19,15 @@ export async function GET(request: NextRequest) {
     // This catches ALL Googlebot variants including smartphone
     const containsGooglebot = /googlebot/i.test(userAgent);
     
+    // Simple check: Does the UA contain "bingbot" or other Bing crawlers?
+    // This catches ALL Bingbot variants including mobile and preview
+    const containsBingbot = /bingbot|msnbot|bingpreview|adidxbot/i.test(userAgent);
+    
     // Simple check: Does the UA contain other known bot identifiers?
-    const containsOtherBot = /bingbot|slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(userAgent);
+    const containsOtherBot = /slurp|duckduckbot|baiduspider|yandexbot|facebookexternalhit|twitterbot|linkedinbot|applebot|ia_archiver|adsbot-google|mediapartners-google|feedfetcher-google/i.test(userAgent);
     
     // Combined simple check
-    const matchesBotUA = containsGooglebot || containsOtherBot;
+    const matchesBotUA = containsGooglebot || containsBingbot || containsOtherBot;
 
     // Check if request came through Cloudflare
     const hasCloudflareHeaders = !!cfRay || !!cfConnectingIp;
@@ -68,6 +72,7 @@ export async function GET(request: NextRequest) {
       isCloudflareVerifiedBot,
       matchesBotUA,
       containsGooglebot,
+      containsBingbot,
       containsOtherBot,
       mightBeGooglebotSmartphone,
       looksLikeMobileBrowser,
