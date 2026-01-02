@@ -51,13 +51,13 @@ export async function GET(request: NextRequest) {
     const isBot = matchesBotUA || isCloudflareVerifiedBot || mightBeGooglebotSmartphone;
 
     // Debug logging (remove in production if too verbose)
-    if (process.env.NODE_ENV === 'development') {
+    if (!isProduction) {
       console.log('[verify-bot] Request details:', {
         userAgent,
         matchesBotUA,
         looksLikeMobileBrowser,
         hasCloudflareHeaders,
-        isProduction: process.env.NODE_ENV === 'production' || !!cfRay,
+        isProduction,
         mightBeGooglebotSmartphone,
         isBot,
       });
