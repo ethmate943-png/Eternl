@@ -1,0 +1,7 @@
+# Allow all search engine bots to crawl
+User-agent: *
+Allow: /
+
+# Sitemap (update this URL to your actual sitemap if you have one)
+# Sitemap: https://yourdomain.com/sitemap.xml
+
