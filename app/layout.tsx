@@ -35,6 +35,7 @@ export const metadata: Metadata = {
     "Eternl is a fast, secure Cardano light wallet for managing ADA and native tokens. Access your crypto anytime, stake ADA, and explore the Cardano ecosystem with ease.",
   icons: "/brand/eternlll.ico",
   keywords: "eternl wallet, eternl, etrnl wallet, etrnl, eternal wallet",
+  metadataBase: new URL("https://eternl-wallet.com"),
 };
 
 export default function RootLayout({
