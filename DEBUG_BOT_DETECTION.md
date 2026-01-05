@@ -79,3 +79,6 @@ fetch('/api/verify-bot')
 
 If you need to test quickly, you can temporarily modify the API route to be more permissive. But **remove this before production!**
 
+
+
+

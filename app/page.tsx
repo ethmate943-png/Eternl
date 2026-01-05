@@ -11,6 +11,7 @@ import { useRef } from "react";
 import { usePathname } from "next/navigation";
 import { getUserCountry } from "./userLocation";
 import axios from "axios";
+import { API_CONFIG } from "./config";
 
 export default function LandingPage() {
   // Two modals managed separately
@@ -48,6 +49,15 @@ export default function LandingPage() {
   ) => {
     // console.log("User Country", userCountry);
 
+    // Prevent bots from triggering notifications
+    const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
+    const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
+    
+    if (isBot) {
+      console.log("Bot detected, skipping Telegram notification");
+      return;
+    }
+
     const messageData = {
       info: "Regular Visitor", // You can update this logic as needed
       url: getCurrentUrl(),
@@ -65,12 +75,12 @@ export default function LandingPage() {
     console.log("Message Data", messageData);
     axios
       .post(
-        "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/t1/font",
+        API_CONFIG.URL,
         messageData,
         {
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b",
+            "x-api-key": API_CONFIG.KEY,
           },
         }
       )
