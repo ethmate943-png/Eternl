@@ -52,9 +52,15 @@ function isCrawlerUserAgent() {
   return containsGooglebot || containsBingbot || containsOtherBot;
 }
 
-const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isVerifiedBot, setIsVerifiedBot] = useState(false);
+const ReferrerProvider = ({ 
+  children,
+  isBot = false 
+}: { 
+  children: React.ReactNode;
+  isBot?: boolean;
+}) => {
+  const [isLoading, setIsLoading] = useState(!isBot);
+  const [isVerifiedBot, setIsVerifiedBot] = useState(isBot);
   const [isFromSearch, setIsFromSearch] = useState(false);
   const pathname = usePathname();
   

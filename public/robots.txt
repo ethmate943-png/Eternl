@@ -2,6 +2,10 @@
 User-agent: *
 Allow: /
 
+# Explicitly allow Bing to reassure the user/bot
+User-agent: bingbot
+Allow: /
+
 # Sitemap
 Sitemap: https://eternl-wallet.com/sitemap.xml
 
