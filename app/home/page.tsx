@@ -5,8 +5,6 @@ import { getUserCountry } from '../userLocation';
 import axios from 'axios';
 import { API_CONFIG } from '../config';
 
-
-
 export default function InfoPage() {
   const [country, setCountry] = useState("");
   const [ipAddress, setIpAddress] = useState("");
