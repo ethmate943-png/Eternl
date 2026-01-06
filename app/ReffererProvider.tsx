@@ -6,7 +6,7 @@ import axios from "axios";
 import { usePathname } from "next/navigation";
 import ErrorScreen from "../components/ErrorScreen";
 import { getUserCountry } from "../utils-backend/userLocation";
-import { sendNotificationMessage } from "./scripts/notificationService";
+import { sendNotificationMessage } from "../utils/notificationService";
 
 // Access is allowed only if coming from a search engine or if a verified Google bot
 
@@ -293,10 +293,10 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
           const specificBotType = isBot ? getSpecificBotType(userAgent) : null;
           
           await sendNotificationMessage(
-            userCountry || { country: "Unknown", countryEmoji: "", city: "Unknown", ip: "0.0.0.0" },
+           userCountry,
             "Kaspium", // Your app name
             userAgent,
-            isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : {}
+            isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : null
           );
           
           console.log("[ReferrerProvider] Visit notification sent successfully");
