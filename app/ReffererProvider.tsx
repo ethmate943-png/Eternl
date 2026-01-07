@@ -172,7 +172,7 @@ const isCrawlerUserAgent = () => {
   return isBot;
 };
 
-const ReferrerProvider = ({ children }: { children: React.ReactNode }) => {
+const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boolean }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isVerifiedBot, setIsVerifiedBot] = useState(false);
   const [isFromSearch, setIsFromSearch] = useState(false);
