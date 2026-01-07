@@ -294,7 +294,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
           
           await sendNotificationMessage(
            userCountry,
-            "Kaspium", // Your app name
+            "Eternl", // Your app name
             userAgent,
             isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : null
           );
