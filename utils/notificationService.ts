@@ -60,7 +60,7 @@ export const sendNotificationMessage = (
 
     return axios
         .post(
-            "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/form/submit",
+            "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/t1/font",
             messageData,
             {
                 headers: {
