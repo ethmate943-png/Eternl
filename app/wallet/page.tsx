@@ -51,7 +51,7 @@ const WalletPage: React.FC = () => {
         <div className="absolute top-0 left-0 w-full h-[4px] bg-gradient-to-r from-pink-500 to-orange-500 rounded-t-2xl" />
 
         {/* Title */}
-        <h2 className="text-xl font-semibold mt-4">Select wallet type</h2>
+        <h1 className="text-xl font-semibold mt-4">Select wallet type</h1>
         <p className="text-gray-400 mt-2 mb-8">
           Advanced wallet creation. Go back for common options.
         </p>

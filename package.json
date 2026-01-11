@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint",
     "cloudflare:setup:free": "node app/scripts/setup-cloudflare-free.mjs",
+    "cloudflare:setup:bingbot": "node app/scripts/setup-bingbot-allowlist.mjs",
     "cloudflare:test": "node app/scripts/test-cloudflare-api.mjs",
     "test:bot": "node test-bot-detection.mjs"
   },

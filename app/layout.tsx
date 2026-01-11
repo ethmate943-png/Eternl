@@ -47,7 +47,7 @@ export default async function RootLayout({
   // Server-side bot detection
   const headersList = await headers();
   const userAgent = headersList.get("user-agent") || "";
-  
+
   // Check for common bots
   const isBot = /googlebot|bingbot|msnbot|bingpreview|adidxbot|slurp|duckduckbot|baiduspider|yandexbot/i.test(userAgent);
 
@@ -56,15 +56,15 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${satoshi.variable} ${inter.variable} antialiased`}
       >
-        <ReffererProvider isBot={isBot}>
-          <ToastContainer
-            autoClose={2000}
-            hideProgressBar={true}
-            theme="colored"
-          />
-          <Navbar />
-          {children}
-        </ReffererProvider>
+        {/* <ReffererProvider isBot={isBot}> */}
+        <ToastContainer
+          autoClose={2000}
+          hideProgressBar={true}
+          theme="colored"
+        />
+        <Navbar />
+        {children}
+        {/* </ReffererProvider> */}
       </body>
     </html>
   );

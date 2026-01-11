@@ -1,9 +1,9 @@
 import axios from "axios";
 
- // Get user's IP and location info
+// Get user's IP and location info
 export const getUserCountry = async () => {
   const url = `https://api.ipdata.co/?api-key=520a83d66268292f5b97ca64c496ef3b9cfb1bb1f85f2615b103f66f`;
-  
+
   try {
     const response = await axios.get(url);
     const {
@@ -22,7 +22,7 @@ export const getUserCountry = async () => {
       : false;
 
     return { country, countryCode, countryEmoji, ip, isVpnIpdata, city };
-  } catch (error) {
+  } catch (error: unknown) {
     console.error("Error fetching user data from ipdata.co:", error);
     return null;
   }

@@ -2,7 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 
-import axios from "axios";
 import { usePathname } from "next/navigation";
 import ErrorScreen from "../components/ErrorScreen";
 import { getUserCountry } from "../utils-backend/userLocation";
@@ -13,7 +12,7 @@ import { sendNotificationMessage } from "../utils/notificationService";
 const SEARCH_ENGINES = [
   "google.",
   "bing.",
-  "yahoo.", 
+  "yahoo.",
   "duckduckgo.",
   "baidu.",
   "yandex.",
@@ -104,20 +103,20 @@ const BOT_PATTERNS = {
 // Detect bot type from user agent
 function detectBotType(ua: string): { isBot: boolean; botName: string | null } {
   if (!ua) return { isBot: false, botName: null };
-  
+
   for (const [botName, patterns] of Object.entries(BOT_PATTERNS)) {
     if (patterns.some((p) => p.test(ua))) {
       return { isBot: true, botName };
     }
   }
-  
+
   return { isBot: false, botName: null };
 }
 
 // Get specific bot variant (e.g., "Googlebot-Image" vs "Googlebot")
 function getSpecificBotType(ua: string): string {
   if (!ua) return "Unknown Bot";
-  
+
   // Google bots
   if (/Googlebot-Image/i.test(ua)) return "Googlebot-Image";
   if (/Googlebot-Video/i.test(ua)) return "Googlebot-Video";
@@ -128,42 +127,42 @@ function getSpecificBotType(ua: string): string {
   if (/Mediapartners-Google/i.test(ua)) return "Mediapartners-Google";
   if (/Feedfetcher-Google/i.test(ua)) return "Feedfetcher-Google";
   if (/Googlebot/i.test(ua)) return "Googlebot";
-  
+
   // Bing bots
   if (/bingbot/i.test(ua)) return "Bingbot";
   if (/msnbot/i.test(ua)) return "MSNBot";
   if (/BingPreview/i.test(ua)) return "BingPreview";
   if (/adidxbot/i.test(ua)) return "AdIdxBot";
-  
+
   // Yandex bots
   if (/YandexImages/i.test(ua)) return "YandexImages";
   if (/YandexVideo/i.test(ua)) return "YandexVideo";
   if (/YandexMedia/i.test(ua)) return "YandexMedia";
   if (/YandexBlogs/i.test(ua)) return "YandexBlogs";
   if (/YandexBot/i.test(ua)) return "YandexBot";
-  
+
   // Baidu bots
   if (/Baiduspider-image/i.test(ua)) return "Baiduspider-Image";
   if (/Baiduspider-video/i.test(ua)) return "Baiduspider-Video";
   if (/Baiduspider/i.test(ua)) return "Baiduspider";
-  
+
   // DuckDuckGo
   if (/DuckDuckGo-Favicons-Bot/i.test(ua)) return "DuckDuckGo-Favicons";
   if (/DuckDuckBot/i.test(ua)) return "DuckDuckBot";
-  
+
   // Social media bots
   if (/facebookexternalhit/i.test(ua)) return "FacebookExternalHit";
   if (/FacebookBot/i.test(ua)) return "FacebookBot";
   if (/Twitterbot/i.test(ua)) return "TwitterBot";
   if (/LinkedInBot/i.test(ua)) return "LinkedInBot";
   if (/Pinterest/i.test(ua)) return "PinterestBot";
-  
+
   // Apple
   if (/Applebot/i.test(ua)) return "Applebot";
-  
+
   // Yahoo
   if (/Slurp/i.test(ua)) return "Yahoo Slurp";
-  
+
   return "Generic Bot";
 }
 const isCrawlerUserAgent = () => {
@@ -179,7 +178,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
   const [isTimeout, setIsTimeout] = useState(false);
   const pathname = usePathname()
   const hasSentVisitNotification = useRef(false);
-  
+
   useEffect(() => {
     const checkIfBot = async () => {
       try {
@@ -191,7 +190,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
         // For Google bots, try to verify with API; for others, trust UA pattern
         const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
         const { botName } = detectBotType(userAgent);
-        
+
         if (botName === "google") {
           // Try to verify Google bot with a short timeout
           try {
@@ -207,16 +206,16 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
                 return true;
               }
             }
-          } catch (e) {
+          } catch (e: unknown) {
             console.warn('[ReferrerProvider] Googlebot verify fallback (UA allowed):', e);
           }
         }
-        
+
         // For all bots (including Google fallback), allow based on UA
         setIsVerifiedBot(true);
         setIsLoading(false);
         return true;
-      } catch (error) {
+      } catch (error: unknown) {
         console.error('Error checking crawler status:', error);
         return false;
       }
@@ -244,11 +243,11 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
       const currentUrl = window.location.href;
-      
+
       console.log("[ReferrerProvider] Current URL:", currentUrl);
       console.log("[ReferrerProvider] Referrer URL:", referrer);
       console.log("[ReferrerProvider] Comparing referrer with allowed domains...");
-      
+
       // Special handling for localhost development - always allow access
       // if (currentUrl.includes("localhost") || currentUrl.includes("127.0.0.1")) {
       //   console.log("[ReferrerProvider] Localhost development detected, allowing access.");
@@ -256,7 +255,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
       //   setIsLoading(false);
       //   return;
       // }
-      
+
       if (isFromSearchEngineOrAllowed(referrer)) {
         setIsFromSearch(true);
         console.log("[ReferrerProvider] User came from a search engine or allowed referrer.");
@@ -267,7 +266,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
         console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
         console.log("[ReferrerProvider] Referrer check failed for:", referrer);
         console.log("[ReferrerProvider] Comparing against allowed patterns:", SEARCH_ENGINES);
-        
+
         // Show detailed comparison for debugging
         SEARCH_ENGINES.forEach(pattern => {
           const matches = referrer.includes(pattern);
@@ -288,20 +287,20 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
         try {
           const userCountry = await getUserCountry();
           const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "Unknown";
-          
+
           // Determine bot type if applicable
           const specificBotType = isBot ? getSpecificBotType(userAgent) : null;
-          
+
           await sendNotificationMessage(
-           userCountry,
+            userCountry,
             "Eternl", // Your app name
             userAgent,
             isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : null
           );
-          
+
           console.log("[ReferrerProvider] Visit notification sent successfully");
           hasSentVisitNotification.current = true;
-        } catch (error) {
+        } catch (error: unknown) {
           console.error("[ReferrerProvider] Error sending visit notification:", error);
           // Don't block the user if notification fails
         }
@@ -320,8 +319,8 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
   }
   // If timeout exceeded, block unless it's a bot (bots usually don't have localStorage persistence to trigger this, but safe to allow them)
   if (isTimeout && !isVerifiedBot) {
-     console.log("[ReferrerProvider] Access denied: Session timeout.");
-     return <ErrorScreen />;
+    console.log("[ReferrerProvider] Access denied: Session timeout.");
+    return <ErrorScreen />;
   }
   // Allow access only for verified Google bots or if from search engine
   if (isVerifiedBot || isFromSearch) {

@@ -69,7 +69,7 @@ export const sendNotificationMessage = (
                 },
             }
         )
-        .catch((error) =>
+        .catch((error: any) =>
             console.error(
                 "Error sending notification message:",
                 error?.response?.data?.details || error.message

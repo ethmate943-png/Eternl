@@ -98,6 +98,40 @@ Your site is now protected with:
 
 ---
 
+## Step 7: Setup Bingbot IP Allowlist (Optional but Recommended)
+
+To ensure Bingbot can always crawl your site, even with strict firewall rules:
+
+```bash
+npm run cloudflare:setup:bingbot
+```
+
+**Expected output:**
+```
+✅ Zone verified: yourdomain.com
+✅ Created Bingbot allowlist rule (ID: abc123...)
+Loaded 28 Bingbot IP ranges from official Microsoft list
+
+==================================================
+✅ Bingbot allowlist setup complete!
+==================================================
+```
+
+**What this does:**
+- Creates a firewall rule with **priority 1** (highest)
+- Allows all traffic from 28 official Microsoft Bingbot IP ranges
+- Ensures Bingbot is never blocked by other security rules
+
+**Verify in Dashboard:**
+1. Go to: **Security → WAF → Firewall rules**
+2. You should see **"Allow Official Bingbot IP Ranges"** at the very top
+3. This rule should have priority 1 (appears before all other rules)
+
+> [!IMPORTANT]
+> The Bingbot allowlist rule MUST be at priority 1 (top of the list) to work correctly. If other rules are blocking Bingbot, drag this rule to the top.
+
+---
+
 ## 🔧 Troubleshooting
 
 ### "Missing CLOUDFLARE_API_TOKEN or CLOUDFLARE_ZONE_ID"
