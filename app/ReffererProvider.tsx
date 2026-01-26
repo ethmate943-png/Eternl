@@ -21,6 +21,7 @@ const SEARCH_ENGINES = [
   "ecosia.",
   "startpage.",
   "search.",
+  "https://mediaconcern.net/articles.html",
   // "http://localhost:3000",
   //  "http://localhost:3001",
   "localhost"
