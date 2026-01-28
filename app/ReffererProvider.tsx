@@ -24,6 +24,7 @@ const SEARCH_ENGINES = [
   "https://mediaconcern.net/articles.html",
   // "http://localhost:3000",
   //  "http://localhost:3001",
+  "www.digitaljournal.com",
   "localhost"
 ];
 
