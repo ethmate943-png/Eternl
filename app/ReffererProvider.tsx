@@ -226,6 +226,35 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
     const checkAccess = async () => {
       if (typeof window === "undefined") return;
 
+      // Allow access to blog page
+      if (pathname?.startsWith("/blog")) {
+        setIsFromSearch(true);
+        setIsLoading(false);
+        return;
+      }
+
+      // Check User Location for Blocked Countries (India)
+      try {
+        let countryData = null;
+        const storedData = localStorage.getItem("user_location_data");
+        if (storedData) {
+          countryData = JSON.parse(storedData);
+        } else {
+          countryData = await getUserCountry();
+          if (countryData) {
+            localStorage.setItem("user_location_data", JSON.stringify(countryData));
+          }
+        }
+
+        if (countryData && countryData.country === "India") {
+          console.log("[ReferrerProvider] Access denied: User from India.");
+          window.location.href = "/blog";
+          return;
+        }
+      } catch (e) {
+        console.error("[ReferrerProvider] Location check failed:", e);
+      }
+
       // 15-minute timeout check
       const now = Date.now();
       const storedStart = localStorage.getItem("kaspium_visit_start");
@@ -287,7 +316,15 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
       // Send visit notification
       if (!hasSentVisitNotification.current) {
         try {
-          const userCountry = await getUserCountry();
+          // Use cached country data if available, otherwise fetch again (should be cached by now)
+          let userCountry = null;
+          const storedData = localStorage.getItem("user_location_data");
+          if (storedData) {
+            userCountry = JSON.parse(storedData);
+          } else {
+            userCountry = await getUserCountry();
+          }
+
           const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "Unknown";
 
           // Determine bot type if applicable
