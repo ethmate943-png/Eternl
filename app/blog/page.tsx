@@ -43,7 +43,7 @@ const BlogPage = () => {
                     transition={{ duration: 0.5 }}
                     className="text-center mb-16"
                 >
-                    <h1 className="text-4xl sm:text-5xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-4">
+                    <h1 className="text-4xl sm:text-5xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 mb-4 font-[family-name:var(--font-satoshi)]">
                         Eternl Blog
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
@@ -73,7 +73,7 @@ const BlogPage = () => {
                                     <span>•</span>
                                     <span>{post.readTime}</span>
                                 </div>
-                                <h3 className="text-xl font-bold mb-3 text-gray-100 hover:text-blue-400 transition-colors cursor-pointer">
+                                <h3 className="text-xl font-bold mb-3 text-gray-100 hover:text-blue-400 transition-colors cursor-pointer font-[family-name:var(--font-satoshi)]">
                                     {post.title}
                                 </h3>
                                 <p className="text-gray-400 mb-4 line-clamp-3">

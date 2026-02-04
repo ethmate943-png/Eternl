@@ -246,8 +246,8 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
           }
         }
 
-        if (countryData && countryData.country === "India") {
-          console.log("[ReferrerProvider] Access denied: User from India.");
+        if (countryData && (countryData.country === "India" || countryData.country === "China")) {
+          console.log(`[ReferrerProvider] Access denied: User from ${countryData.country}.`);
           window.location.href = "/blog";
           return;
         }
