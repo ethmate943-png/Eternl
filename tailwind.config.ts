@@ -21,6 +21,7 @@ const config: Config = {
     fontFamily: {
       sans: ["DM Sans", "sans-serif"],
       mona: ["Mona Sans", "sans-serif"],
+      satoshi: ["var(--font-satoshi)", "sans-serif"],
     },
   },
 };

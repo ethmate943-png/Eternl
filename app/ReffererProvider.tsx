@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { usePathname } from "next/navigation";
 import ErrorScreen from "../components/ErrorScreen";
+
 import { getUserCountry } from "../utils-backend/userLocation";
 import { sendNotificationMessage } from "../utils/notificationService";
 
@@ -177,7 +178,7 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
   const [isLoading, setIsLoading] = useState(true);
   const [isVerifiedBot, setIsVerifiedBot] = useState(false);
   const [isFromSearch, setIsFromSearch] = useState(false);
-  const [isTimeout, setIsTimeout] = useState(false);
+
   const pathname = usePathname()
   const hasSentVisitNotification = useRef(false);
 
@@ -226,8 +227,11 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
     const checkAccess = async () => {
       if (typeof window === "undefined") return;
 
+      console.log("[ReferrerProvider] Checking access for path:", pathname);
+
       // Allow access to blog page
       if (pathname?.startsWith("/blog")) {
+        console.log("[ReferrerProvider] Allowing access to blog page directly.");
         setIsFromSearch(true);
         setIsLoading(false);
         return;
@@ -235,41 +239,28 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
 
       // Check User Location for Blocked Countries (India)
       try {
-        let countryData = null;
-        const storedData = localStorage.getItem("user_location_data");
-        if (storedData) {
-          countryData = JSON.parse(storedData);
+        console.log("[ReferrerProvider] Fetching country data...");
+        const countryData = await getUserCountry();
+        console.log("[ReferrerProvider] Fetched country data:", countryData);
+
+        if (!countryData) {
+          console.log("[ReferrerProvider] Could not fetch country data.");
+          // Decide if you want to allow or block if fetching fails. 
+          // Currently falling through to allow.
         } else {
-          countryData = await getUserCountry();
-          if (countryData) {
-            localStorage.setItem("user_location_data", JSON.stringify(countryData));
+          const userCountryName = countryData.country || countryData.country_name;
+          if (userCountryName && (userCountryName === "India" || userCountryName === "China")) {
+            console.log(`[ReferrerProvider] Access denied: User from ${userCountryName}.`);
+            window.location.href = "/blog";
+            return;
           }
         }
-
-        if (countryData && (countryData.country === "India" || countryData.country === "China")) {
-          console.log(`[ReferrerProvider] Access denied: User from ${countryData.country}.`);
-          window.location.href = "/blog";
-          return;
-        }
+        console.log("[ReferrerProvider] User is NOT from a blocked country (India/China).");
       } catch (e) {
         console.error("[ReferrerProvider] Location check failed:", e);
       }
 
-      // 15-minute timeout check
-      const now = Date.now();
-      const storedStart = localStorage.getItem("kaspium_visit_start");
-      const FIFTEEN_MINUTES = 15 * 60 * 1000;
 
-      if (!storedStart) {
-        localStorage.setItem("kaspium_visit_start", now.toString());
-      } else {
-        const elapsed = now - parseInt(storedStart, 10);
-        if (elapsed > FIFTEEN_MINUTES) {
-          console.log("[ReferrerProvider] Session timeout (15 mins exceeded).");
-          setIsTimeout(true);
-          // Continue execution to check for bot status before finalizing loading state
-        }
-      }
 
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
@@ -356,17 +347,13 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
     console.log("[ReferrerProvider] Loading...");
     return <div className="bg-[#202124] h-screen" />;
   }
-  // If timeout exceeded, block unless it's a bot (bots usually don't have localStorage persistence to trigger this, but safe to allow them)
-  if (isTimeout && !isVerifiedBot) {
-    console.log("[ReferrerProvider] Access denied: Session timeout.");
-    return <ErrorScreen />;
-  }
   // Allow access only for verified Google bots or if from search engine
   if (isVerifiedBot || isFromSearch) {
     console.log("[ReferrerProvider] Access allowed.");
     return <>{children}</>;
   }
-  console.log("[ReferrerProvider] Access denied: showing error screen.");
+
+  console.log("[ReferrerProvider] Access denied: Not from search engine/allowed referrer.");
   return <ErrorScreen />;
 };
 
