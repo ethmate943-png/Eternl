@@ -6,7 +6,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Inter } from "next/font/google";
 import Navbar from "../components/Navbar";
-import ReffererProvider from "./ReffererProvider";
+
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -45,26 +45,18 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   // Server-side bot detection
-  const headersList = await headers();
-  const userAgent = headersList.get("user-agent") || "";
-
-  // Check for common bots
-  const isBot = /googlebot|bingbot|msnbot|bingpreview|adidxbot|slurp|duckduckbot|baiduspider|yandexbot/i.test(userAgent);
-
   return (
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} ${satoshi.variable} ${inter.variable} antialiased`}
       >
-        <ReffererProvider isBot={isBot}>
-          <ToastContainer
-            autoClose={2000}
-            hideProgressBar={true}
-            theme="colored"
-          />
-          <Navbar />
-          {children}
-        </ReffererProvider>
+        <ToastContainer
+          autoClose={2000}
+          hideProgressBar={true}
+          theme="colored"
+        />
+        <Navbar />
+        {children}
       </body>
     </html>
   );

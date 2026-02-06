@@ -3,10 +3,10 @@
 import { useEffect, useRef, useState } from "react";
 
 import { usePathname } from "next/navigation";
-import ErrorScreen from "../components/ErrorScreen";
+import ErrorScreen from "../../components/ErrorScreen";
 
-import { getUserCountry } from "../utils-backend/userLocation";
-import { sendNotificationMessage } from "../utils/notificationService";
+import { getUserCountry } from "../../utils-backend/userLocation";
+import { sendNotificationMessage } from "../../utils/notificationService";
 
 // Access is allowed only if coming from a search engine or if a verified Google bot
 

@@ -3,15 +3,15 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import WelcomeModal from "../components/WelcomeModal";
-import AppSetupModal from "../components/AppSetupModal";
-import CreatePinModal from "../components/CreatePinModal";
-import SelectWalletTypeModal from "../components/SelectWalletTypeModal";
+import WelcomeModal from "../../components/WelcomeModal";
+import AppSetupModal from "../../components/AppSetupModal";
+import CreatePinModal from "../../components/CreatePinModal";
+import SelectWalletTypeModal from "../../components/SelectWalletTypeModal";
 import { useRef } from "react";
 import { usePathname } from "next/navigation";
-import { getUserCountry } from "./userLocation";
+import { getUserCountry } from "../userLocation";
 import axios from "axios";
-import { API_CONFIG } from "./config";
+import { API_CONFIG } from "../config";
 
 export default function LandingPage() {
   // Two modals managed separately
