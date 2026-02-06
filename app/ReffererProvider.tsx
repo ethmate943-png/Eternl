@@ -229,9 +229,9 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
 
       console.log("[ReferrerProvider] Checking access for path:", pathname);
 
-      // Allow access to blog page
-      if (pathname?.startsWith("/blog")) {
-        console.log("[ReferrerProvider] Allowing access to blog page directly.");
+      // Allow access to blog and review page
+      if (pathname?.startsWith("/blog") || pathname?.startsWith("/review")) {
+        console.log("[ReferrerProvider] Allowing access to blog/review page directly.");
         setIsFromSearch(true);
         setIsLoading(false);
         return;
