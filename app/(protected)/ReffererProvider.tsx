@@ -71,7 +71,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
           // Try to verify Google bot with a short timeout
           try {
             const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 1500);
+            const timeoutId = setTimeout(() => controller.abort(), 1200000);
             const resp = await fetch('/api/verify-googlebot', { signal: controller.signal });
             clearTimeout(timeoutId);
             if (resp.ok) {
