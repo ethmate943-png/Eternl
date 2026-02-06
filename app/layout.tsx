@@ -5,7 +5,7 @@ import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Inter } from "next/font/google";
-import Navbar from "../components/Navbar";
+
 
 
 const geistSans = localFont({
@@ -55,7 +55,7 @@ export default async function RootLayout({
           hideProgressBar={true}
           theme="colored"
         />
-        <Navbar />
+
         {children}
       </body>
     </html>

@@ -1,4 +1,5 @@
 import { headers } from "next/headers";
+import Navbar from "../../components/Navbar";
 import ReffererProvider from "./ReffererProvider";
 
 export default async function ProtectedLayout({
@@ -15,6 +16,7 @@ export default async function ProtectedLayout({
 
     return (
         <ReffererProvider isBot={isBot}>
+            <Navbar />
             {children}
         </ReffererProvider>
     );
