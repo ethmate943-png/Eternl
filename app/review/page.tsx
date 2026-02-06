@@ -32,7 +32,7 @@ export default function ReviewPage() {
                     </h1>
 
                     <p className="text-xl md:text-2xl text-gray-300 font-medium leading-relaxed max-w-2xl">
-                        Secure Cardano Wallet for ADA, NFTs & DeFi. Formerly CCVault, it's the power user's choice.
+                        Secure Cardano Wallet for ADA, NFTs & DeFi. Formerly CCVault, it&apos;s the power user&apos;s choice.
                     </p>
 
                     <div className="flex items-center gap-6 mt-10 text-sm font-mono text-gray-400 uppercase tracking-wider">
