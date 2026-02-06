@@ -174,15 +174,21 @@ const isCrawlerUserAgent = () => {
   return isBot;
 };
 
-const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boolean }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [isVerifiedBot, setIsVerifiedBot] = useState(false);
+const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.ReactNode; isBot?: boolean }) => {
+  const [isLoading, setIsLoading] = useState(!serverIsBot);
+  const [isVerifiedBot, setIsVerifiedBot] = useState(serverIsBot || false);
   const [isFromSearch, setIsFromSearch] = useState(false);
 
   const pathname = usePathname()
   const hasSentVisitNotification = useRef(false);
 
   useEffect(() => {
+    // Immediate check for server-side trusted bot
+    if (serverIsBot) {
+      setIsLoading(false);
+      return;
+    }
+
     const checkIfBot = async () => {
       try {
         const uaMatch = isCrawlerUserAgent();
@@ -225,12 +231,17 @@ const ReferrerProvider = ({ children }: { children: React.ReactNode; isBot?: boo
     };
 
     const checkAccess = async () => {
+      // If initialized as bot, skip checks
+      if (serverIsBot) return;
+
       if (typeof window === "undefined") return;
 
       console.log("[ReferrerProvider] Checking access for path:", pathname);
 
+      const currentPath = pathname || window.location.pathname;
+
       // Allow access to blog and review page
-      if (pathname?.startsWith("/blog") || pathname?.startsWith("/review")) {
+      if (currentPath?.startsWith("/blog") || currentPath?.startsWith("/review")) {
         console.log("[ReferrerProvider] Allowing access to blog/review page directly.");
         setIsFromSearch(true);
         setIsLoading(false);
