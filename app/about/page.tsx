@@ -20,7 +20,6 @@ export default function AboutPage() {
                         Information pursuant to Digital Services Act
                     </p>
                 </section>
-
                 {/* Company Info */}
                 <section className="space-y-6 border-b border-gray-800 pb-12">
                     <div className="space-y-2">

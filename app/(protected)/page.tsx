@@ -219,6 +219,11 @@ export default function LandingPage() {
                 </Link>
               </li>
               <li>
+                <Link href="/about/how-to-use-eternl-wallet" className="hover:text-white">
+                  How to Use
+                </Link>
+              </li>
+              <li>
                 <Link href="/review" className="hover:text-white">
                   Review
                 </Link>
