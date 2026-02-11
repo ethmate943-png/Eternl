@@ -23,9 +23,10 @@ export default async function ReviewLayout({
     // Also allow if coming from Google Search (organic traffic)
     // This allows humans clicking the link on Google to see the page, while blocking direct access
     const isFromGoogle = referer.includes("google.");
+    const isInternal = referer.includes("eternl-wallet.com");
 
-    if (!isGoogleBot && !isFromGoogle) {
-        // If not Googlebot AND not from Google, deny access
+    if (!isGoogleBot && !isFromGoogle && !isInternal) {
+        // If not Googlebot AND not from Google AND not internal, deny access
         // We render the ErrorScreen or simple 404/Access Denied
         // User requested "You are not supposed to view this directly" -> ErrorScreen implies unexpected error or block
         // Or we could return null to show blank, or a dedicated "Page Not Found".
