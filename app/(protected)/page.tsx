@@ -214,13 +214,13 @@ export default function LandingPage() {
             <h3 className="font-semibold mb-2">Resources</h3>
             <ul className="space-y-1">
               <li>
-                <Link href="#" className="hover:text-white">
-                  Wiki
+                <Link href="/about" className="hover:text-white">
+                  About
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:text-white">
-                  Imprint
+                <Link href="/review" className="hover:text-white">
+                  Review
                 </Link>
               </li>
             </ul>
