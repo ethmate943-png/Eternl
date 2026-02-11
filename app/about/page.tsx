@@ -1,4 +1,5 @@
 import React from "react";
+import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -34,6 +35,26 @@ export default function AboutPage() {
                         <p className="text-gray-300">
                             <span className="font-semibold text-gray-400">EIN:</span> 82-2978660
                         </p>
+                    </div>
+                </section>
+
+                {/* Resources */}
+                <section className="space-y-6 border-b border-gray-800 pb-12">
+                    <h2 className="text-2xl font-semibold text-blue-400">
+                        Resources
+                    </h2>
+                    <div className="grid md:grid-cols-2 gap-6">
+                        <Link
+                            href="/about/how-to-use-eternl-wallet"
+                            className="block p-6 bg-gray-900 border border-gray-800 rounded-xl hover:border-blue-500 transition-colors group"
+                        >
+                            <h3 className="text-xl font-medium text-white mb-2 group-hover:text-blue-400 transition-colors">
+                                How to Use Eternl Wallet
+                            </h3>
+                            <p className="text-gray-400">
+                                A step-by-step guide for beginners and experienced users on setting up and using Eternl.
+                            </p>
+                        </Link>
                     </div>
                 </section>
 
