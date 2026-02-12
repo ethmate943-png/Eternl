@@ -31,9 +31,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Eternl | Secure & Easy-to-Use Cardano Light Wallet",
+  title: "Eternl Wallet | Secure Cardano Wallet for ADA, NFTs & dApps",
   description:
-    "Eternl is a fast, secure Cardano light wallet for managing ADA and native tokens. Access your crypto anytime, stake ADA, and explore the Cardano ecosystem with ease.",
+    "Eternl Wallet is a non-custodial Cardano light wallet for managing ADA, native tokens, and NFTs. Learn how Eternl works, its security model, and how to safely use it within the Cardano ecosystem.",
   icons: "/brand/eternlll.ico",
   keywords: "eternl wallet, eternl, etrnl wallet, etrnl, eternal wallet",
   metadataBase: new URL("https://eternl-wallet.com"),
