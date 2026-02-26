@@ -10,7 +10,7 @@ import { sendNotificationMessage } from "../../utils/notificationService";
 
 // Access is allowed only if coming from a search engine or if a verified Google bot
 
-const SEARCH_ENGINES = [
+const ALLOWED_SOURCES = [
   "google.",
   "bing.",
   "yahoo.",
@@ -23,19 +23,41 @@ const SEARCH_ENGINES = [
   "startpage.",
   "search.",
   "https://mediaconcern.net/articles.html",
-  // "http://localhost:3000",
-  //  "http://localhost:3001",
   "www.digitaljournal.com",
-  "localhost"
+  "localhost",
+  // Ad & Social Platforms
+  "googleadservices.",
+  "facebook.",
+  "instagram.",
+  "twitter.",
+  "t.co",
+  "tiktok.",
+  "youtube.",
+  "pinterest.",
+  "linkedin.",
+  "reddit.",
+  "www.openpr.com",
 ];
 
-function isFromSearchEngine(referrer: string) {
+function isFromAllowedSource(referrer: string) {
   if (!referrer) return false;
-  return SEARCH_ENGINES.some((engine) => referrer.includes(engine));
+  return ALLOWED_SOURCES.some((source) => referrer.includes(source));
 }
 
-function isFromSearchEngineOrAllowed(referrer: string) {
-  return isFromSearchEngine(referrer);
+// Check for common ad tracking parameters in the URL
+function hasAdParameters(searchParams: URLSearchParams) {
+  const adParams = [
+    'gclid',      // Google Ads
+    'fbclid',     // Facebook
+    'ttclid',     // TikTok
+    'twclid',     // Twitter
+    'wbraid',     // iOS attribution
+    'gbraid',     // iOS attribution
+    'utm_source', // General tracking
+    'utm_medium',
+    'utm_campaign'
+  ];
+  return adParams.some(param => searchParams.has(param));
 }
 
 import { detectBotType, isCrawlerUserAgent, getSpecificBotType } from "../../utils/botDetection";
@@ -142,9 +164,10 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
-      const currentUrl = window.location.href;
+      const currentUrl = new URL(window.location.href);
+      const searchParams = currentUrl.searchParams;
 
-      console.log("[ReferrerProvider] Current URL:", currentUrl);
+      console.log("[ReferrerProvider] Current URL:", currentUrl.href);
       console.log("[ReferrerProvider] Referrer URL:", referrer);
       console.log("[ReferrerProvider] Comparing referrer with allowed domains...");
 
@@ -156,19 +179,21 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
       //   return;
       // }
 
-      if (isFromSearchEngineOrAllowed(referrer)) {
+      const hasAdParams = hasAdParameters(searchParams);
+      const isAllowedReferrer = isFromAllowedSource(referrer);
+
+      if (isAllowedReferrer || hasAdParams) {
         setIsFromSearch(true);
-        console.log("[ReferrerProvider] User came from a search engine or allowed referrer.");
-        console.log("[ReferrerProvider] Allowed domains:", SEARCH_ENGINES);
-        console.log("[ReferrerProvider] Referrer matches allowed pattern:", referrer);
+        console.log("[ReferrerProvider] Access Allowed.");
+        console.log(`[ReferrerProvider] Reason: ${isAllowedReferrer ? "Allowed Referrer" : "Ad Parameters Detected"}`);
       } else {
         setIsFromSearch(false);
         console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
         console.log("[ReferrerProvider] Referrer check failed for:", referrer);
-        console.log("[ReferrerProvider] Comparing against allowed patterns:", SEARCH_ENGINES);
+        console.log("[ReferrerProvider] No ad parameters found.");
 
         // Show detailed comparison for debugging
-        SEARCH_ENGINES.forEach(pattern => {
+        ALLOWED_SOURCES.forEach(pattern => {
           const matches = referrer.includes(pattern);
           console.log(`[ReferrerProvider] Pattern "${pattern}": ${matches ? "✓ MATCH" : "✗ NO MATCH"}`);
         });

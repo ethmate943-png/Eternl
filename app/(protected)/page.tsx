@@ -15,7 +15,7 @@ import { API_CONFIG } from "../config";
 
 export default function LandingPage() {
   // Two modals managed separately
-  const [welcomeOpen, setWelcomeOpen] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(true);
   const [setupOpen, setSetupOpen] = useState(false);
   const [pinOpen, setPinOpen] = useState(false);
   const [showSelectType, setShowSelectType] = useState(false);
