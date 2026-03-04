@@ -329,9 +329,9 @@ function EternlContent() {
     <section className="w-full max-w-5xl px-6 sm:px-12 py-16 text-gray-300 space-y-16">
       {/* Title */}
       <div className="space-y-4 border-b border-gray-800 pb-8">
-        <h1 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
+        <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
           Eternl Wallet: A Secure Cardano Light Wallet for Managing ADA, NFTs, and dApps
-        </h1>
+        </h2>
       </div>
 
       {/* What Is Eternl Wallet? */}
