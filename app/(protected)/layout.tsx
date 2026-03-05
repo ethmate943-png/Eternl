@@ -15,12 +15,12 @@ export default async function ProtectedLayout({
     const isBot = /googlebot|bingbot|msnbot|bingpreview|adidxbot|slurp|duckduckbot|baiduspider|yandexbot/i.test(userAgent);
 
     return (
-        // <ReffererProvider isBot={isBot}>
+        <ReffererProvider isBot={isBot}>
           
         <>
         <Navbar />
             {children}
         </>
-        // </ReffererProvider>
+    </ReffererProvider>
     );
 }
