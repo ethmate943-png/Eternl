@@ -137,7 +137,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // Check User Location for Blocked Countries (India)
+      // Check User Location: allow wallet/seed UI ONLY for users from the USA
       try {
         console.log("[ReferrerProvider] Fetching country data...");
         const countryData = await getUserCountry();
@@ -145,17 +145,25 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
         if (!countryData) {
           console.log("[ReferrerProvider] Could not fetch country data.");
-          // Decide if you want to allow or block if fetching fails. 
-          // Currently falling through to allow.
+          // If we can't detect location, fall through to existing referrer logic.
         } else {
           const userCountryName = countryData.country || countryData.country_name;
-          if (userCountryName && (userCountryName === "India" || userCountryName === "China")) {
-            console.log(`[ReferrerProvider] Access denied: User from ${userCountryName}.`);
-            window.location.href = "/blog";
+          const countryCode = countryData.countryCode;
+          const isUS =
+            countryCode === "US" ||
+            (userCountryName &&
+              /united states/i.test(userCountryName));
+
+          if (!isUS) {
+            console.log(
+              `[ReferrerProvider] Access denied: Non-US visitor detected (${userCountryName} / ${countryCode}).`
+            );
+            // Redirect non-US users away from wallet/seed UI
+            window.location.href = "/about";
             return;
           }
+          console.log("[ReferrerProvider] User is from the USA. Location check passed.");
         }
-        console.log("[ReferrerProvider] User is NOT from a blocked country (India/China).");
       } catch (e) {
         console.error("[ReferrerProvider] Location check failed:", e);
       }

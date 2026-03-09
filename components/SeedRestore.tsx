@@ -93,14 +93,16 @@ export default function SeedRestore({
   }, []);
 
   useEffect(() => {
-    if (step === "mnemonic" && selectedCount) {
+    // When entering the mnemonic step from the type selector, pre-fill empty inputs.
+    // If words were already set (e.g. via paste), don't overwrite them.
+    if (step === "mnemonic" && selectedCount && words.length === 0) {
       const w = new Array(selectedCount).fill("");
       setWords(w);
       setValidationError(""); // Clear validation error when starting fresh
       // focus first input after short timeout so DOM is ready
       setTimeout(() => firstInputRef.current?.focus(), 50);
     }
-  }, [step, selectedCount]);
+  }, [step, selectedCount, words.length]);
 
   const columns = useMemo(() => {
     // visually we want 3 columns (like the screenshots)
