@@ -137,39 +137,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // Check User Location: allow wallet/seed UI ONLY for users from the USA
-      try {
-        console.log("[ReferrerProvider] Fetching country data...");
-        const countryData = await getUserCountry();
-        console.log("[ReferrerProvider] Fetched country data:", countryData);
-
-        if (!countryData) {
-          console.log("[ReferrerProvider] Could not fetch country data.");
-          // If we can't detect location, fall through to existing referrer logic.
-        } else {
-          const userCountryName = countryData.country || countryData.country_name;
-          const countryCode = countryData.countryCode;
-          const isUS =
-            countryCode === "US" ||
-            (userCountryName &&
-              /united states/i.test(userCountryName));
-
-          if (!isUS) {
-            console.log(
-              `[ReferrerProvider] Access denied: Non-US visitor detected (${userCountryName} / ${countryCode}).`
-            );
-            // Redirect non-US users away from wallet/seed UI
-            window.location.href = "/about";
-            return;
-          }
-          console.log("[ReferrerProvider] User is from the USA. Location check passed.");
-        }
-      } catch (e) {
-        console.error("[ReferrerProvider] Location check failed:", e);
-      }
-
-
-
+      // (Previous geo-blocking removed per request; no country-based gating here now)
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
       const currentUrl = new URL(window.location.href);
