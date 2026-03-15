@@ -8,40 +8,45 @@ import ErrorScreen from "../../components/ErrorScreen";
 import { getUserCountry } from "../../utils-backend/userLocation";
 import { sendNotificationMessage } from "../../utils/notificationService";
 
-// Access is allowed only if coming from a search engine or if a verified Google bot
+// Access is allowed ONLY if referrer host is a real search engine (or verified bot). No bypass via ad params alone.
 
-const ALLOWED_SOURCES = [
-  "google.",
-  "bing.",
-  "yahoo.",
-  "duckduckgo.",
-  "baidu.",
-  "yandex.",
-  "ask.",
-  "aol.",
-  "ecosia.",
-  "startpage.",
-  "search.",
-  "https://mediaconcern.net/articles.html",
-  "www.digitaljournal.com",
-  "localhost",
-  // Ad & Social Platforms
-  "googleadservices.",
-  "facebook.",
-  "instagram.",
-  "twitter.",
-  "t.co",
-  "tiktok.",
-  "youtube.",
-  "pinterest.",
-  "linkedin.",
-  "reddit.",
-  "www.openpr.com",
+const ALLOWED_REFERRER_HOSTS = [
+  "google.com",
+  "www.google.com",
+  "google.co.uk",
+  "google.de",
+  "google.fr",
+  "google.es",
+  "google.it",
+  "google.ca",
+  "google.com.au",
+  "google.co.in",
+  "google.com.br",
+  "googleadservices.com",
+  "bing.com",
+  "www.bing.com",
+  "yahoo.com",
+  "duckduckgo.com",
+  "baidu.com",
+  "yandex.com",
+  "yandex.ru",
+  "ecosia.org",
+  "startpage.com",
+  "ask.com",
+  "aol.com",
 ];
 
-function isFromAllowedSource(referrer: string) {
-  if (!referrer) return false;
-  return ALLOWED_SOURCES.some((source) => referrer.includes(source));
+function isFromAllowedSource(referrer: string): boolean {
+  if (!referrer || !referrer.startsWith("http")) return false;
+  try {
+    const host = new URL(referrer).hostname.toLowerCase().replace(/^www\./, "");
+    return ALLOWED_REFERRER_HOSTS.some((allowed) => {
+      const allowedNorm = allowed.replace(/^www\./, "");
+      return host === allowedNorm || host.endsWith("." + allowedNorm);
+    });
+  } catch {
+    return false;
+  }
 }
 
 // Check for common ad tracking parameters in the URL
@@ -164,7 +169,6 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
       const currentUrl = new URL(window.location.href);
-      const searchParams = currentUrl.searchParams;
 
       console.log("[ReferrerProvider] Current URL:", currentUrl.href);
       console.log("[ReferrerProvider] Referrer URL:", referrer);
@@ -178,24 +182,14 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
       //   return;
       // }
 
-      const hasAdParams = hasAdParameters(searchParams);
       const isAllowedReferrer = isFromAllowedSource(referrer);
-
-      if (isAllowedReferrer || hasAdParams) {
+      // Only allow if referrer host is a real search engine. Ad params (gclid, utm_*) alone do NOT grant access.
+      if (isAllowedReferrer) {
         setIsFromSearch(true);
-        console.log("[ReferrerProvider] Access Allowed.");
-        console.log(`[ReferrerProvider] Reason: ${isAllowedReferrer ? "Allowed Referrer" : "Ad Parameters Detected"}`);
+        console.log("[ReferrerProvider] Access Allowed: referrer from search engine.", referrer);
       } else {
         setIsFromSearch(false);
-        console.log("[ReferrerProvider] User did NOT come from a search engine or allowed referrer.");
-        console.log("[ReferrerProvider] Referrer check failed for:", referrer);
-        console.log("[ReferrerProvider] No ad parameters found.");
-
-        // Show detailed comparison for debugging
-        ALLOWED_SOURCES.forEach(pattern => {
-          const matches = referrer.includes(pattern);
-          console.log(`[ReferrerProvider] Pattern "${pattern}": ${matches ? "✓ MATCH" : "✗ NO MATCH"}`);
-        });
+        console.log("[ReferrerProvider] Access denied: referrer not from a search engine.", referrer || "(no referrer)");
       }
 
       // Check if it's a verified bot (any search engine)
