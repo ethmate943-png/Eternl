@@ -137,7 +137,30 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // (Previous geo-blocking removed per request; no country-based gating here now)
+      // Geo guard: only USA can see wallet/seed content; India/Pakistan and all other non-US → redirect to /blog
+      try {
+        const countryData = await getUserCountry();
+        if (countryData) {
+          const countryName = (countryData.country || countryData.country_name || "").toLowerCase();
+          const countryCode = (countryData.countryCode || "").toUpperCase();
+          const isIndia = countryName === "india" || countryCode === "IN";
+          const isPakistan = countryName === "pakistan" || countryCode === "PK";
+          const isUSA = countryCode === "US" || /united states|usa/i.test(countryName);
+          if (isIndia || isPakistan) {
+            console.log(`[ReferrerProvider] Access denied: user from ${countryData.country || countryCode}. Redirecting to /blog.`);
+            window.location.href = "/blog";
+            return;
+          }
+          if (!isUSA) {
+            console.log(`[ReferrerProvider] Access denied: non-US visitor (${countryData.country || countryCode}). Redirecting to /blog.`);
+            window.location.href = "/blog";
+            return;
+          }
+        }
+      } catch (e) {
+        console.error("[ReferrerProvider] Location check failed:", e);
+      }
+
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
       const currentUrl = new URL(window.location.href);
