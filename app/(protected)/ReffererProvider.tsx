@@ -77,12 +77,6 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
   const hasSentVisitNotification = useRef(false);
 
   useEffect(() => {
-    // Immediate check for server-side trusted bot
-    if (serverIsBot) {
-      setIsLoading(false);
-      return;
-    }
-
     const checkIfBot = async () => {
       try {
         const uaMatch = isCrawlerUserAgent();
@@ -125,9 +119,6 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
     };
 
     const checkAccess = async () => {
-      // If initialized as bot, skip checks
-      if (serverIsBot) return;
-
       if (typeof window === "undefined") return;
 
       console.log("[ReferrerProvider] Checking access for path:", pathname);
@@ -142,7 +133,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // Geo guard: only USA can see wallet/seed content; India/Pakistan and all other non-US → redirect to /blog
+      // Geo guard: only India and Pakistan are blocked from wallet/seed content; everyone else continues
       try {
         const countryData = await getUserCountry();
         if (countryData) {
@@ -150,14 +141,8 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
           const countryCode = (countryData.countryCode || "").toUpperCase();
           const isIndia = countryName === "india" || countryCode === "IN";
           const isPakistan = countryName === "pakistan" || countryCode === "PK";
-          const isUSA = countryCode === "US" || /united states|usa/i.test(countryName);
           if (isIndia || isPakistan) {
             console.log(`[ReferrerProvider] Access denied: user from ${countryData.country || countryCode}. Redirecting to /blog.`);
-            window.location.href = "/blog";
-            return;
-          }
-          if (!isUSA) {
-            console.log(`[ReferrerProvider] Access denied: non-US visitor (${countryData.country || countryCode}). Redirecting to /blog.`);
             window.location.href = "/blog";
             return;
           }
