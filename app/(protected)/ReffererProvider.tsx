@@ -141,7 +141,12 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
           const countryCode = (countryData.countryCode || "").toUpperCase();
           const isIndia = countryName === "india" || countryCode === "IN";
           const isPakistan = countryName === "pakistan" || countryCode === "PK";
-          if (isIndia || isPakistan) {
+          const isPhilippines =
+            countryName === "philippines" ||
+            countryCode === "PH" ||
+            countryName.includes("philippines");
+
+          if (isIndia || isPakistan || isPhilippines) {
             console.log(`[ReferrerProvider] Access denied: user from ${countryData.country || countryCode}. Redirecting to /blog.`);
             window.location.href = "/blog";
             return;
