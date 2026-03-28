@@ -86,7 +86,7 @@ export default function EternlWelcomeModal({
               type="button"
               onClick={onNext}
               aria-label="Start setup"
-              className="p-button p-component p-button-rounded et-button w-full sm:w-auto px-10 py-3 text-base font-semibold justify-center !bg-[#ff4081] !text-black border-none"
+              className="p-button p-component p-button-rounded et-button w-full sm:w-auto px-10 py-3 text-base font-semibold justify-center !bg-[#ff4081] !text-black border-none uppercase"
               data-p="rounded"
               data-pc-name="button"
               data-p-disabled="false"

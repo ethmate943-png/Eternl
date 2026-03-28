@@ -255,8 +255,8 @@ export default function EternlWalletTypeModal({
           <div className="absolute top-0 h-[3px] w-full bg-gradient-to-r from-pink-400 to-orange-400" />
         </div>
 
-        {/* Floating SVG correctly resized to screenshot */}
-        <div className="pointer-events-none absolute -top-[300px] -mr-[7rem] sm:-right-[40px] z-10 drop-shadow-[0_16px_24px_rgba(0,0,0,0.6)]">
+        {/* Floating SVG correctly resized to screenshot — hidden on mobile for better responsiveness */}
+        <div className="pointer-events-none absolute -top-[300px] -mr-[7rem] sm:-right-[40px] z-10 drop-shadow-[0_16px_24px_rgba(0,0,0,0.6)] hidden sm:block">
           <EternlWalletCreatedIllustration className="w-[500px] h-[500px] object-contain" />
         </div>
 
@@ -264,7 +264,7 @@ export default function EternlWalletTypeModal({
           <div className="flex w-[70%] sm:w-3/4 flex-col gap-2 text-left">
             <h2
               id="et-wallet-type-title"
-              className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight"
+              className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight uppercase"
             >
               Select wallet type
             </h2>
@@ -313,12 +313,12 @@ export default function EternlWalletTypeModal({
                     suppressBackdrop ? "pointer-events-none" : ""
                   }`}
                 >
-                  {icon}
+                  <div className="shrink-0">{icon}</div>
                   <div className="grow flex flex-col text-left">
-                    <div className="text-[15px] font-semibold text-white">
+                    <div className="text-[15px] font-semibold text-white uppercase sm:text-base">
                       {title}
                     </div>
-                    <div className="text-sm text-white/50 mt-0.5">{desc}</div>
+                    <div className="text-sm text-white/50 mt-0.5 leading-tight">{desc}</div>
                   </div>
                 </button>
               ))}

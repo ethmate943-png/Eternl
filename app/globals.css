@@ -24,6 +24,10 @@
     font-family: var(--inter), sans-serif;
   }
 
+  button, .p-button {
+    text-transform: uppercase !important;
+  }
+
   * {
     @apply border-[var(--border)];
   }
