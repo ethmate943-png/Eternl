@@ -76,7 +76,7 @@ export default function EternlModalShell({
             <div className="flex w-full flex-col items-center gap-2 px-14 pl-16 text-center sm:gap-3">
               <h2
                 id={titleId}
-                className="min-h-12 w-full text-xl font-semibold uppercase text-white"
+                className="min-h-12 w-full text-xl font-semibold capitalize text-white"
               >
                 {title}
               </h2>

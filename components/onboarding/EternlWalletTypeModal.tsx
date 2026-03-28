@@ -264,7 +264,7 @@ export default function EternlWalletTypeModal({
           <div className="flex w-[70%] sm:w-3/4 flex-col gap-2 text-left">
             <h2
               id="et-wallet-type-title"
-              className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight uppercase"
+              className="text-xl sm:text-2xl font-bold text-white tracking-tight leading-tight capitalize"
             >
               Select wallet type
             </h2>
@@ -315,7 +315,7 @@ export default function EternlWalletTypeModal({
                 >
                   <div className="shrink-0">{icon}</div>
                   <div className="grow flex flex-col text-left">
-                    <div className="text-[15px] font-semibold text-white uppercase sm:text-base">
+                    <div className="text-[15px] font-semibold text-white capitalize sm:text-base">
                       {title}
                     </div>
                     <div className="text-sm text-white/50 mt-0.5 leading-tight">{desc}</div>
