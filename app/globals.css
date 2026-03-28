@@ -21,7 +21,7 @@
     margin: 0;
     padding: 0;
     @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
-    font-family: var(--inter), "Satoshi", sans-serif;
+    font-family: var(--inter), sans-serif;
   }
 
   * {

@@ -49,7 +49,6 @@ export default function Home() {
                     data-pc-name="button"
                     data-p-disabled="false"
                     data-p-severity="primary"
-                    pc0_0_0_0=""
                     data-pc-section="root"
                   >
                     {/*  */}<span
@@ -86,7 +85,6 @@ export default function Home() {
                     aria-orientation="horizontal"
                     data-p="horizontal solid"
                     data-pc-name="divider"
-                    pc0_0_0_1=""
                     data-pc-section="root"
                     style={{ justifyContent: 'center' }}
                   >
@@ -99,7 +97,7 @@ export default function Home() {
                     <span
                       data-v-4890f9c0=""
                       className="text-center et-text-md text-txt-muted"
-                      >Your Cardano wallet "to go", now with DApp support:</span
+                      >Your Cardano wallet &quot;to go&quot;, now with DApp support:</span
                     ><button
                       data-v-4890f9c0=""
                       className="p-button p-component p-button-secondary p-button-rounded p-button-outlined w-full py-2"
@@ -108,7 +106,6 @@ export default function Home() {
                       data-pc-name="button"
                       data-p-disabled="false"
                       data-p-severity="secondary"
-                      pc0_0_0_2=""
                       data-pc-section="root"
                     >
                       <img
@@ -125,7 +122,6 @@ export default function Home() {
                       data-pc-name="button"
                       data-p-disabled="false"
                       data-p-severity="secondary"
-                      pc0_0_0_3=""
                       data-pc-section="root"
                     >
                       <img
@@ -162,7 +158,6 @@ export default function Home() {
                       aria-orientation="horizontal"
                       data-p="horizontal solid"
                       data-pc-name="divider"
-                      pc0_0_0_4=""
                       data-pc-section="root"
                       style={{ justifyContent: 'center' }}
                     >
@@ -185,7 +180,6 @@ export default function Home() {
                         data-pc-name="button"
                         data-p-disabled="false"
                         data-p-severity="secondary"
-                        pc0_0_0_5=""
                         data-pc-section="root"
                       >
                         <img

@@ -1,6 +1,5 @@
 import "./globals.css";
 import type { Metadata } from "next";
-import { headers } from "next/headers";
 import localFont from "next/font/local";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -12,10 +11,6 @@ const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "500",
-});
-const satoshi = localFont({
-  src: "../public/fonts/satoshi/Satoshi-Variable.woff",
-  variable: "--font-satoshi",
 });
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
@@ -48,7 +43,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${satoshi.variable} ${inter.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${inter.variable} antialiased`}
       >
         <ToastContainer
           autoClose={2000}
