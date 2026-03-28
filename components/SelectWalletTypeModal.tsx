@@ -2,8 +2,6 @@
 
 import React, { useState } from "react";
 import SecondaryModal from "./SecondaryModal";
-import SeedRestore from "./SeedRestore";
-import NewWallet from "./NewWallet";
 import HardwareConnect from "./HardwareConnect";
 import MultiSigSetup from "./MultiSigSetup";
 import ImportBackup from "./ImportBackup";
@@ -11,6 +9,7 @@ import CLISigningKeys from "./CLISigningKeys";
 import AccountPubKey from "./AccountPubKey";
 import AddressReadOnly from "./AddressReadOnly";
 import QRImport from "./QRImport";
+import { WalletPostOnboardingStack } from "./onboarding";
 
 type Item = {
   key: string;
@@ -113,6 +112,9 @@ export default function SelectWalletTypeModal({
 
   if (!open) return null;
 
+  const isWalletPostOnboardingActive =
+    activeSecondaryKey === "new" || activeSecondaryKey === "seed" || activeSecondaryKey === "hardware";
+
   const handleItemClick = (it: Item) => {
     if (it.key === "more") {
       setView("more");
@@ -132,6 +134,31 @@ export default function SelectWalletTypeModal({
   const confirmFromSecondary = (key: string, payload?: unknown) => {
     setActiveSecondaryKey(null);
     onSelect?.(key, payload);
+  };
+
+  const handleWalletPostOnboardingSelect = (key: string, payload?: unknown) => {
+    // Keys emitted by `WalletPostOnboardingStack`:
+    // - new | seed | hardware | multisig | more
+    if (key === "new") return confirmFromSecondary("new", payload);
+    if (key === "seed") return confirmFromSecondary("seed", payload);
+
+    if (key === "hardware") {
+      setActiveSecondaryKey("hardware"); // Use the modern stack
+      return;
+    }
+
+    if (key === "multisig") {
+      setActiveSecondaryKey("multisig");
+      return;
+    }
+
+    if (key === "more") {
+      setActiveSecondaryKey(null);
+      setView("more");
+      return;
+    }
+
+    confirmFromSecondary(key, payload);
   };
 
   const renderItem = (it: Item) => (
@@ -236,40 +263,36 @@ export default function SelectWalletTypeModal({
         </div>
       </div>
 
-      {/* ✅ Secondary modal flow */}
+      {/* ✅ New onboarding flow (terms + mnemonic/seed) */}
+      <WalletPostOnboardingStack
+        open={isWalletPostOnboardingActive}
+        initialSubView={
+          activeSecondaryKey === "new"
+            ? "mnemonic"
+            : activeSecondaryKey === "seed"
+            ? "seedType"
+            : "hardware"
+        }
+        onDismiss={closeSecondary}
+        onWalletSelect={handleWalletPostOnboardingSelect}
+      />
+
+      {/* ✅ Legacy secondary modal flow (hardware/import/etc.) */}
       <SecondaryModal
-        open={!!activeSecondaryKey}
+        open={!!activeSecondaryKey && !isWalletPostOnboardingActive}
         onClose={closeSecondary}
         title={
-          activeSecondaryKey === "new"
-            ? "Create New Wallet"
-            : activeSecondaryKey === "hw"
+          activeSecondaryKey === "hw"
             ? "Connect Hardware Wallet"
-            : activeSecondaryKey === "seed"
-            ? "Enter Seed-Phrase"
             : activeSecondaryKey === "multisig"
             ? "Multi-Sig Wallet"
             : ""
         }
       >
-        {activeSecondaryKey === "new" && (
-          <NewWallet
-            onCancel={closeSecondary}
-            onConfirm={(data) => confirmFromSecondary("new", data)}
-          />
-        )}
-
         {activeSecondaryKey === "hw" && (
           <HardwareConnect
             onCancel={closeSecondary}
             onConfirm={(data) => confirmFromSecondary("hw", data)}
-          />
-        )}
-
-        {activeSecondaryKey === "seed" && (
-          <SeedRestore
-            onCancel={closeSecondary}
-            onConfirm={(data) => confirmFromSecondary("seed", data)}
           />
         )}
 

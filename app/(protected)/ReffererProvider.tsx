@@ -30,6 +30,7 @@ const ALLOWED_REFERRER_HOSTS = [
   "baidu.com",
   "yandex.com",
   "yandex.ru",
+  "http://localhost:3000",
   "ecosia.org",
   "startpage.com",
   "ask.com",
