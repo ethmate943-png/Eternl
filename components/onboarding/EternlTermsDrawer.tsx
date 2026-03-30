@@ -50,10 +50,10 @@ export default function EternlTermsDrawer({
         role="dialog"
         aria-modal="true"
         aria-labelledby={`${baseId}-title`}
-        className="relative mx-auto mb-0 w-full max-w-4xl rounded-t-2xl border border-white/10 bg-[hsl(0_0%_8%)] px-4 pb-6 pt-2 shadow-[0_-12px_48px_rgba(0,0,0,0.55)] sm:px-6"
+        className="relative mx-auto mb-0 w-full max-w-4xl rounded-t-2xl border border-white/10 bg-[#171717] px-4 pb-6 pt-2 shadow-[0_-12px_48px_rgba(0,0,0,0.55)] sm:px-6"
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-8 overflow-hidden rounded-t-2xl">
-          <div className="absolute top-0 h-1.5 w-full bg-gradient-to-r from-rose-500 via-amber-400 to-fuchsia-500" />
+          <div className="absolute top-0 h-1.5 w-full bg-brand-gradient" />
         </div>
 
         <header className="relative mt-6 px-1 text-center sm:mt-8">
@@ -74,7 +74,7 @@ export default function EternlTermsDrawer({
             <label className="flex cursor-pointer items-start gap-3">
               <input
                 type="checkbox"
-                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-pink-500"
+                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-brand-red"
                 checked={a}
                 onChange={(e) => setA(e.target.checked)}
               />
@@ -95,7 +95,7 @@ export default function EternlTermsDrawer({
             <label className="flex cursor-pointer items-start gap-3">
               <input
                 type="checkbox"
-                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-pink-500"
+                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-brand-red"
                 checked={b}
                 onChange={(e) => setB(e.target.checked)}
               />
@@ -108,7 +108,7 @@ export default function EternlTermsDrawer({
             <label className="flex cursor-pointer items-start gap-3">
               <input
                 type="checkbox"
-                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-pink-500"
+                className="mt-1 size-4 shrink-0 rounded border-white/25 bg-white/5 accent-brand-red"
                 checked={c}
                 onChange={(e) => setC(e.target.checked)}
               />
@@ -126,9 +126,9 @@ export default function EternlTermsDrawer({
               disabled={!allChecked}
               onClick={onConfirm}
               aria-label="Confirm"
-              className="inline-flex min-h-11 min-w-[120px] items-center justify-center rounded-full bg-gradient-to-b from-rose-400 to-pink-600 px-8 text-sm font-semibold text-white shadow-inner ring-1 ring-black/30 transition enabled:hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-40"
+              className="p-button p-component p-button-rounded et-button w-fit px-12 py-3 text-base font-semibold justify-center bg-brand-red !text-black border-none capitalize shadow-lg !rounded-full transition enabled:hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              Confirm
+              <span className="p-button-label px-2 !text-black">Confirm</span>
             </button>
           </div>
         </div>

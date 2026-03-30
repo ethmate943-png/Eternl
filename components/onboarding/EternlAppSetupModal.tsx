@@ -41,7 +41,7 @@ export default function EternlAppSetupModal({
              {/* Network Button - Flush Left */}
             <button
               type="button"
-              className="p-button p-component p-button-secondary network-button p-0 h-9.5 w-full sm:w-auto rounded-full shadow-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] transition"
+              className="p-button p-component p-button-secondary network-button p-0 h-9.5 w-fit sm:w-auto !rounded-full shadow-sm border border-white/10 bg-white/[0.03] hover:bg-white/[0.08] transition"
             >
               <div className="flex flex-row items-center gap-3 px-1">
                 <img
@@ -64,7 +64,7 @@ export default function EternlAppSetupModal({
               type="button"
               onClick={() => onNext({ language, currency, mode })}
               aria-label="next"
-              className="p-button p-component p-button-rounded ml-auto inline-flex min-h-11 min-w-[100px] items-center justify-center rounded-full bg-gradient-to-b from-rose-400 to-pink-600 px-8 text-sm font-semibold text-white shadow-inner ring-1 ring-black/30 transition hover:brightness-105"
+              className="p-button p-component p-button-rounded ml-auto inline-flex min-h-11 min-w-[100px] items-center justify-center !rounded-full bg-brand-red px-8 text-sm font-semibold text-black shadow-inner ring-1 ring-black/30 transition hover:brightness-105"
             >
               next
             </button>
@@ -151,6 +151,7 @@ export default function EternlAppSetupModal({
             </button>
           </div>
         </div>
+
       </div>
     </EternlModalShell>
   );

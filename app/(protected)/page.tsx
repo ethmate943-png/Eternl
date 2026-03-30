@@ -9,6 +9,7 @@ import {
   EternlWalletTypeModal,
   WalletPostOnboardingStack,
   EternlWelcomeModal,
+  EternlOnboardingHeader,
 } from "../../components/onboarding";
 import EternlTermsDrawer from "../../components/onboarding/EternlTermsDrawer";
 import EternlPreloader from "../../components/EternlPreloader";
@@ -43,7 +44,7 @@ import { API_CONFIG } from "../config";
 
 export default function LandingPage() {
   const [step, setStep] = useState<OnboardingStep>("welcome");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [mode, setMode] = useState<"simple" | "pro" | null>(null);
   const [preloaderCounter, setPreloaderCounter] = useState(3);
   const [view, setView] = useState<"main" | "more">("main");
@@ -175,11 +176,10 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-[#0e0e0e] text-white flex flex-col items-center relative">
-      {/* Top gradient line */}
-      <div className="w-full h-0.5 bg-gradient-to-r from-pink-500 via-orange-400 to-purple-500" />
-
+      <EternlOnboardingHeader />
+      
       {/* Hero section */}
-      <section className="flex flex-col items-start text-left mt-24 px-12 sm:px-24 flex-grow">
+      <section className="flex flex-col items-start text-left mt-24 px-8 w-full md:w-[80%] md:px-16 flex-grow">
         <h1 className="mt-10 text-5xl sm:text-6xl font-extrabold leading-tight">
           <span className="bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
             A modern Cardano Wallet.{" "}
@@ -197,7 +197,7 @@ export default function LandingPage() {
 
         <button
           onClick={() => { setStep("welcome"); setOpen(true); }}
-          className="mt-8 bg-pink-500 hover:bg-pink-600 text-white font-semibold rounded-full px-8 py-4 transition"
+          className="mt-8 bg-brand-red hover:opacity-90 text-black font-semibold rounded-full px-12 py-4 transition shadow-xl"
         >
           Open app
         </button>

@@ -232,7 +232,7 @@ export default function EternlWalletTypeModal({
 
   return (
     <div
-      className={`fixed inset-0 ${zIndexClass} flex items-end justify-center px-3 pb-0 pt-24 sm:px-6`}
+      className={`fixed inset-0 ${zIndexClass} flex items-center justify-center px-3 pb-0 pt-0 sm:px-6`}
       role="presentation"
     >
       {!suppressBackdrop ? (
@@ -248,11 +248,11 @@ export default function EternlWalletTypeModal({
         role="dialog"
         aria-modal="true"
         aria-labelledby="et-wallet-type-title"
-        className="relative flex max-h-[90vh] w-full max-w-[640px] flex-col rounded-3xl border border-white/10 bg-[hsl(0_0%_8%)] shadow-[0_-12px_48px_rgba(0,0,0,0.55)] ring-1 ring-white/10 overflow-visible"
+        className="relative flex max-h-[90vh] w-full max-w-[640px] flex-col rounded-3xl border border-white/10 bg-[#171717] shadow-[0_-12px_48px_rgba(0,0,0,0.55)] ring-1 ring-white/10 overflow-visible"
       >
         {/* Gradient top bar (re-added as per layout) */}
         <div className="pointer-events-none absolute inset-x-0 top-0 h-6 overflow-hidden rounded-t-3xl">
-          <div className="absolute top-0 h-[3px] w-full bg-gradient-to-r from-pink-400 to-orange-400" />
+          <div className="absolute top-0 h-[3px] w-full bg-brand-gradient" />
         </div>
 
         {/* Floating SVG correctly resized to screenshot — hidden on mobile for better responsiveness */}

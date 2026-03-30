@@ -4,6 +4,22 @@
   --color-background: hsl(var(--background));
   --color-foreground: hsl(var(--foreground));
   --color-border: hsl(var(--border));
+  --color-brand-red: #ff5166;
+  --color-brand-yellow: #ffb919;
+  --brand-gradient: linear-gradient(90deg, #ff5166 0%, #ffb919 100%);
+}
+
+@layer utilities {
+  .text-brand-gradient {
+    background: linear-gradient(90deg, #ff5166 0%, #ffb919 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  
+  .bg-brand-gradient {
+    background: linear-gradient(90deg, #ff5166 0%, #ffb919 100%);
+  }
 }
 
 @layer base {
