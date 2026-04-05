@@ -238,7 +238,7 @@ export default function EternlWalletTypeModal({
       {!suppressBackdrop ? (
         <button
           type="button"
-          className={`absolute inset-0 ${ETERNL_MODAL_BACKDROP}`}
+          className={`absolute inset-0 outline-none focus:outline-none ${ETERNL_MODAL_BACKDROP}`}
           aria-label="Close"
           onClick={onClose}
         />
@@ -286,7 +286,7 @@ export default function EternlWalletTypeModal({
                   onClick={() =>
                     !suppressBackdrop && setNetworkSwitcherOpen(true)
                   }
-                  className={`p-button p-component p-button-secondary network-button flex h-10 items-center rounded-full border border-white/10 bg-white/[0.04] p-0 text-left shadow-sm transition hover:bg-white/[0.07] sm:h-11 ${
+                  className={`p-button p-component p-button-secondary network-button flex h-10 items-center rounded-full border border-white/10 bg-white/[0.04] p-0 text-left shadow-sm transition outline-none hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 sm:h-11 ${
                     suppressBackdrop ? "pointer-events-none" : ""
                   }`}
                 >
@@ -309,7 +309,7 @@ export default function EternlWalletTypeModal({
                   key={key}
                   type="button"
                   onClick={() => onSelect?.(key)}
-                  className={`p-button p-component p-button-secondary p-button-outlined button-card-horizontal flex w-full flex-row items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left shadow-sm transition hover:bg-white/[0.07] sm:gap-5 sm:px-5 sm:py-5 ${
+                  className={`p-button p-component p-button-secondary p-button-outlined button-card-horizontal flex w-full flex-row items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-4 text-left shadow-sm transition outline-none hover:bg-white/[0.07] focus:outline-none focus-visible:ring-2 focus-visible:ring-white/25 sm:gap-5 sm:px-5 sm:py-5 ${
                     suppressBackdrop ? "pointer-events-none" : ""
                   }`}
                 >
