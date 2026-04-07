@@ -1,0 +1,22 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "eternl-wallet.com" }],
+      "destination": "https://eternlwallet.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.eternl-wallet.com" }],
+      "destination": "https://eternlwallet.com/:path*",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "www.eternlwallet.com" }],
+      "destination": "https://eternlwallet.com/:path*",
+      "permanent": true
+    }
+  ]
+}

@@ -4,6 +4,9 @@ import { Metadata } from "next";
 export const metadata: Metadata = {
     title: "Eternl Wallet Review: Secure Cardano Wallet for ADA, NFTs & DeFi",
     description: "A comprehensive review of Eternl Wallet, a non-custodial wallet for the Cardano blockchain.",
+    alternates: {
+        canonical: "/review",
+    },
 };
 
 export default function ReviewPage() {

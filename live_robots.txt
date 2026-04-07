@@ -64,6 +64,6 @@ User-agent: bingbot
 Allow: /
 
 # Sitemap
-Sitemap: https://eternl-wallet.com/sitemap.xml
+Sitemap: https://eternlwallet.com/sitemap.xml
 
 

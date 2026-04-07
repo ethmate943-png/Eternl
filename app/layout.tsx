@@ -1,6 +1,7 @@
 import "./globals.css";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { siteMetadataBase } from "../lib/site";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Inter } from "next/font/google";
@@ -31,7 +32,16 @@ export const metadata: Metadata = {
   "Eternl Wallet is a non-custodial Cardano light wallet for managing ADA, native tokens, and NFTs. Learn how Eternl works",
   icons: "/brand/eternlll.ico",
   keywords: "eternl wallet, eternl, etrnl wallet, etrnl, eternal wallet",
-  metadataBase: new URL("https://eternl-wallet.com"),
+  metadataBase: siteMetadataBase,
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Eternl Wallet",
+  },
 };
 
 export default async function RootLayout({

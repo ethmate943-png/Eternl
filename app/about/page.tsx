@@ -5,6 +5,9 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
     title: "Imprint / Legal Notice | Eternl",
     description: "Legal information and imprint for Eternl.",
+    alternates: {
+        canonical: "/about",
+    },
 };
 
 export default function AboutPage() {

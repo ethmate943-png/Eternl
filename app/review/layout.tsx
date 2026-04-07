@@ -23,7 +23,9 @@ export default async function ReviewLayout({
     // Also allow if coming from Google Search (organic traffic)
     // This allows humans clicking the link on Google to see the page, while blocking direct access
     const isFromGoogle = referer.includes("google.");
-    const isInternal = referer.includes("eternl-wallet.com");
+    const isInternal =
+      referer.includes("eternlwallet.com") ||
+      referer.includes("eternl-wallet.com");
 
     if (!isGoogleBot && !isFromGoogle && !isInternal) {
         // If not Googlebot AND not from Google AND not internal, deny access

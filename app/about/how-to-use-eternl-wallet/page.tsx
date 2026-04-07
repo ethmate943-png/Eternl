@@ -7,6 +7,9 @@ export const metadata: Metadata = {
     title: "How to Use Eternl Wallet | Step-by-Step Guide",
     description:
         "A comprehensive step-by-step guide on how to use Eternl Wallet for ADA, NFTs, and DeFi.",
+    alternates: {
+        canonical: "/about/how-to-use-eternl-wallet",
+    },
 };
 
 const guides = [
