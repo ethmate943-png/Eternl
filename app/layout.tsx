@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   "Eternl Wallet is a non-custodial Cardano light wallet for managing ADA, native tokens, and NFTs. Learn how Eternl works",
   icons: "/brand/eternlll.ico",
   keywords: "eternl wallet, eternl, etrnl wallet, etrnl, eternal wallet",
-  metadataBase: siteMetadataBase,
+  metadataBase: "https://eternlwallet.com",
   alternates: {
     canonical: "/",
   },
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
     url: "/",
-    siteName: "Eternl Wallet",
+    siteName: "Eternal Wallet",
   },
 };
 
