@@ -1,0 +1,8 @@
+# Netlify deploy (eternl-wallet.com → eternlwallet.com). Vercel ignores this file.
+# Path preserved: /about → https://eternlwallet.com/about
+
+[[redirects]]
+  from = "/*"
+  to = "https://eternlwallet.com/:splat"
+  status = 301
+  force = true
