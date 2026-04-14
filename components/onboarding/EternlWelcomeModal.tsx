@@ -44,7 +44,7 @@ export default function EternlWelcomeModal({
       <div className="flex flex-col items-center">
         {/* Custom Header within the content area for more control */}
         <div className="flex flex-col items-center gap-1 mb-8">
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight text-white mb-1">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight text-white mb-1">
             <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-fuchsia-500 bg-clip-text text-transparent">
               Welcome to Eternl!
             </span>
