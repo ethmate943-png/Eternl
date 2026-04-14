@@ -48,7 +48,7 @@ export default function EternlWelcomeModal({
             <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-fuchsia-500 bg-clip-text text-transparent">
               Welcome to Eternl!
             </span>
-          </h1>
+          </h2>
           <p className="text-base sm:text-lg text-center text-white/60">
             a multi-platform Cardano wallet
           </p>
