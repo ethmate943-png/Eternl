@@ -1,4 +1,4 @@
- "use client";
+"use client";
 
 import { useEffect, useState } from "react";
 import {
@@ -34,14 +34,17 @@ type WalletPickerKey =
   | "address-readonly"
   | "qr-import";
 
-const bgPatternStyle = {
-  backgroundImage: "radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px)",
-  backgroundSize: "24px 24px",
-};
+const gradientTextClass = "bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400 bg-clip-text text-transparent";
+const gradientBgClass = "bg-gradient-to-r from-pink-500 via-orange-400 to-yellow-400";
+const gradientBgDiagonalClass = "bg-gradient-to-br from-pink-500 via-orange-400 to-yellow-400";
+/** Hero headline: coral → orange (matches Eternl marketing screenshot) */
+const heroHeadlineGradientClass =
+  "bg-gradient-to-r from-[#FF4D6D] to-[#FF9F1C] bg-clip-text text-transparent";
+const heroCtaBgClass = "bg-[#FF4D6D]";
 
 export default function ProtectedLandingPage() {
   const [step, setStep] = useState<OnboardingStep>("welcome");
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [preloaderCounter, setPreloaderCounter] = useState(3);
   const [view, setView] = useState<"main" | "more">("main");
   const [activeSecondaryKey, setActiveSecondaryKey] = useState<WalletPickerKey | null>(null);
@@ -87,19 +90,18 @@ export default function ProtectedLandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#0a0a0a] text-gray-300" style={bgPatternStyle}>
-      <NavigationSection onLaunchApp={openOnboarding} />
-      <HeroSection />
-      <StatsSection />
+    <main className="min-h-screen bg-[#121212] text-gray-300">
+      <HeroSection onOpenApp={openOnboarding} />
+      <TrustSignalsSection />
+      <WhyChooseSection />
       <FeaturesSection />
-      <TimelineSection />
-      <MythsRealitySection />
-      <SecurityStackSection />
-      <HowItWorksSection />
       <UseCasesSection />
-      <MembershipSection />
+      <HowItWorksSection />
+      <SecurityTrustSection />
+      <WhatIsCardanoWalletSection />
+      <ComparisonSection />
       <FaqSection />
-      <CtaSection />
+      <CtaSection onOpenApp={openOnboarding} />
       <FooterSection />
       <OnboardingFlow
         open={open}
@@ -114,48 +116,6 @@ export default function ProtectedLandingPage() {
         onMainSelect={handleMainSelect}
       />
     </main>
-  );
-}
-
-function NavigationSection({ onLaunchApp }: { onLaunchApp: () => void }) {
-  return (
-    <nav className="fixed top-0 w-full z-50 backdrop-blur-md bg-[#0a0a0a]/80 border-b border-white/5">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-md flex items-center justify-center">
-            <span className="text-white font-semibold text-lg">E</span>
-          </div>
-          <span className="text-white font-medium text-lg tracking-tight">Eternl</span>
-        </div>
-        <div className="hidden md:flex items-center gap-8 text-sm font-medium">
-          <a href="#" className="text-white">
-            Features
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Security
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            How It Works
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Use Cases
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            FAQ
-          </a>
-          <a href="#" className="hover:text-white transition-colors">
-            Wallet
-          </a>
-        </div>
-        <button
-          onClick={onLaunchApp}
-          className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-5 py-2 rounded-full text-sm font-medium hover:opacity-90 transition-opacity flex items-center gap-2"
-        >
-          Launch App
-          <i data-lucide="external-link" className="w-4 h-4" />
-        </button>
-      </div>
-    </nav>
   );
 }
 
@@ -264,161 +224,161 @@ function OnboardingFlow({
   );
 }
 
-function HeroSection() {
+function HeroSection({ onOpenApp }: { onOpenApp: () => void }) {
   return (
-    <section className="max-w-7xl mx-auto px-6 pt-40 pb-24 grid lg:grid-cols-2 gap-16 items-center relative">
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-orange-500/20 rounded-full blur-[120px] -z-10" />
-      <div>
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-white/10 bg-white/5 text-sm mb-6 text-gray-400">
-          <i data-lucide="shield-check" className="w-4 h-4 text-orange-400" />
-          The Most Trusted Cardano Wallet
-        </div>
-        <h1 className="text-5xl md:text-7xl font-medium tracking-tight text-white leading-[1.1] mb-6">
-          Your Gateway
-          <br />
-          to the
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-red-500">
-            Cardano
-            <br />
-            Ecosystem
-          </span>
-        </h1>
-        <p className="text-base md:text-lg text-gray-400 mb-8 max-w-md leading-relaxed">
-          Next-gen non-custodial wallet. Stake, transact, and explore Cardano dApps securely.
-        </p>
-        <div className="flex flex-wrap items-center gap-4 mb-10">
-          <button className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-full text-base font-medium hover:shadow-[0_0_20px_rgba(249,115,22,0.4)] transition-all flex items-center gap-2">
-            Get Started Free
-            <i data-lucide="arrow-right" className="w-4 h-4" />
-          </button>
-          <button className="px-6 py-3 rounded-full text-base font-medium text-white border border-white/10 hover:bg-white/5 transition-colors">
-            Explore Features
-          </button>
-        </div>
-        <div className="flex items-center gap-6 text-sm text-gray-500">
-          <span className="flex items-center gap-2">
-            <i data-lucide="check-circle-2" className="w-4 h-4 text-gray-400" />
-            Non-Custodial
-          </span>
-          <span className="flex items-center gap-2">
-            <i data-lucide="zap" className="w-4 h-4 text-orange-400" />
-            Instant Staking
-          </span>
-          <span className="flex items-center gap-2">
-            <i data-lucide="layers" className="w-4 h-4 text-blue-400" />
-            Multi-Account
-          </span>
-        </div>
-      </div>
-      <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-tr from-orange-500/10 to-transparent rounded-2xl blur-xl" />
-        <div className="bg-[#121214] border border-white/10 rounded-2xl p-6 shadow-2xl relative overflow-hidden">
-          <div className="flex items-center justify-between mb-8">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg" />
-              <div>
-                <div className="text-sm font-medium text-white">Main Account</div>
-                <div className="text-xs text-gray-500">addr1...x7k2</div>
-              </div>
-            </div>
-            <div className="w-2 h-2 bg-green-500 rounded-full shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
-          </div>
-          <div className="flex justify-between items-end mb-8">
-            <div>
-              <div className="text-sm text-gray-400 mb-1">Total Balance</div>
-              <div className="text-4xl font-medium tracking-tight text-white">
-                24,847.52
-                <span className="text-base text-gray-500">ADA</span>
-              </div>
-              <div className="text-sm text-green-400 mt-1">+12.4% this month</div>
-            </div>
-            <div className="flex items-center gap-2 bg-[#1a1a1d] px-3 py-1.5 rounded-md border border-white/5">
-              <i data-lucide="lock" className="w-4 h-4 text-orange-400" />
-              <span className="text-xs text-white">Secured</span>
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4 mb-8">
-            <div className="bg-[#1a1a1d] p-4 rounded-xl border border-white/5">
-              <div className="text-sm text-gray-400 mb-1">Staked</div>
-              <div className="text-base font-medium text-white">18,500 ADA</div>
-            </div>
-            <div className="bg-[#1a1a1d] p-4 rounded-xl border border-white/5 flex justify-between items-center">
-              <div>
-                <div className="text-sm text-gray-400 mb-1">Rewards</div>
-                <div className="text-base font-medium text-orange-400">+847 ADA</div>
-              </div>
-              <i data-lucide="trending-up" className="w-5 h-5 text-orange-400" />
-            </div>
-          </div>
-          <div className="grid grid-cols-2 gap-4">
-            <button className="bg-white/5 hover:bg-white/10 text-white py-3 rounded-xl text-sm font-medium border border-white/10 transition-colors">
-              Send
-            </button>
-            <button className="bg-[#2a2a2d] hover:bg-[#333336] text-white py-3 rounded-xl text-sm font-medium transition-colors border border-white/5">
-              Receive
-            </button>
-          </div>
-        </div>
+    <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-10 sm:pt-14 md:pt-16 pb-20 sm:pb-28 min-h-screen flex flex-col justify-center">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] max-w-5xl">
+        <span className={`block ${heroHeadlineGradientClass}`}>The Most Powerful Cardano</span>
+        <span className={`block ${heroHeadlineGradientClass}`}>Wallet for Web3</span>
+      </h1>
+      <p className="mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl">
+        Secure, non-custodial, and built for performance—Eternl gives you full control of your ADA,
+        staking, and dApps in one seamless experience.
+      </p>
+      <div className="mt-10 sm:mt-12 flex flex-wrap items-center gap-4">
+        <button
+          type="button"
+          onClick={onOpenApp}
+          className={`${heroCtaBgClass} text-white px-8 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-[filter] active:brightness-95`}
+        >
+          Download Wallet
+        </button>
+        <button
+          type="button"
+          onClick={onOpenApp}
+          className="px-8 py-3.5 rounded-full text-base font-semibold text-white border border-white/20 hover:bg-white/5 transition-colors"
+        >
+          Get Started
+        </button>
       </div>
     </section>
   );
 }
 
-function StatsSection() {
+function TrustSignalsSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6 py-12 border-y border-white/5 bg-black/20">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-8 divide-x divide-white/5">
-        <div className="flex flex-col items-center text-center px-4">
-          <div className="w-10 h-10 bg-red-500/10 rounded-full flex items-center justify-center mb-4">
-            <i data-lucide="users" className="w-5 h-5 text-red-400" />
-          </div>
-          <div className="text-3xl font-medium tracking-tight text-white mb-1">300K+</div>
-          <div className="text-sm text-gray-500">Active Users</div>
-        </div>
-        <div className="flex flex-col items-center text-center px-4">
-          <div className="w-10 h-10 bg-yellow-500/10 rounded-full flex items-center justify-center mb-4">
-            <i data-lucide="coins" className="w-5 h-5 text-yellow-400" />
-          </div>
-          <div className="text-3xl font-medium tracking-tight text-white mb-1">$2.5B+</div>
-          <div className="text-sm text-gray-500">Assets Managed</div>
-        </div>
-        <div className="flex flex-col items-center text-center px-4">
-          <div className="w-10 h-10 bg-orange-500/10 rounded-full flex items-center justify-center mb-4">
-            <i data-lucide="activity" className="w-5 h-5 text-orange-400" />
-          </div>
-          <div className="text-3xl font-medium tracking-tight text-white mb-1">1M+</div>
-          <div className="text-sm text-gray-500">Transactions</div>
-        </div>
-        <div className="flex flex-col items-center text-center px-4">
-          <div className="w-10 h-10 bg-green-500/10 rounded-full flex items-center justify-center mb-4">
-            <i data-lucide="trending-up" className="w-5 h-5 text-green-400" />
-          </div>
-          <div className="text-3xl font-medium tracking-tight text-white mb-1">99.9%</div>
-          <div className="text-sm text-gray-500">Uptime</div>
-        </div>
+    <section className="max-w-6xl mx-auto px-6 py-12 border-y border-white/10 bg-black/20">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:divide-x md:divide-white/5">
+        <TrustItem icon="users" iconBg="bg-pink-500/10" iconColor="text-pink-400" stat="300,000+" label="Active Users" />
+        <TrustItem
+          icon="coins"
+          iconBg="bg-orange-400/10"
+          iconColor="text-orange-400"
+          stat="Billions+"
+          label="Assets Managed"
+        />
+        <TrustItem
+          icon="shield-check"
+          iconBg="bg-yellow-400/10"
+          iconColor="text-yellow-400"
+          stat="Non-Custodial"
+          label="Open Ecosystem"
+        />
       </div>
     </section>
+  );
+}
+
+function TrustItem({
+  icon,
+  iconBg,
+  iconColor,
+  stat,
+  label,
+}: {
+  icon: string;
+  iconBg: string;
+  iconColor: string;
+  stat: string;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-col items-center text-center px-4">
+      <div className={`w-10 h-10 ${iconBg} rounded-full flex items-center justify-center mb-4`}>
+        <i data-lucide={icon} className={`w-5 h-5 ${iconColor}`} />
+      </div>
+      <div className="text-3xl font-medium tracking-tight text-white mb-1">{stat}</div>
+      <div className="text-sm text-gray-500">{label}</div>
+    </div>
+  );
+}
+
+function WhyChooseSection() {
+  return (
+    <section className="max-w-5xl mx-auto px-6 py-20">
+      <div className="max-w-3xl mb-12">
+        <span className="text-xs font-medium text-orange-300 bg-orange-400/10 px-3 py-1 rounded-full border border-orange-400/20">
+          Why Choose Eternl
+        </span>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mt-6 mb-6">
+          A Smarter Way to Manage Your{" "}
+          <span className={gradientTextClass}>Cardano Assets</span>
+        </h2>
+        <p className="text-base md:text-lg text-gray-400 leading-relaxed">
+          Eternl is a next-generation Cardano wallet designed for users who demand speed, control, and
+          flexibility. Whether you&rsquo;re staking ADA, interacting with dApps, or managing multiple wallets,
+          Eternl delivers a powerful and intuitive experience.
+        </p>
+      </div>
+      <div className="grid sm:grid-cols-2 gap-4">
+        <BenefitItem text="Full ownership of your private keys" />
+        <BenefitItem text="Lightning-fast transactions and syncing" />
+        <BenefitItem text="Seamless dApp integration" />
+        <BenefitItem text="Advanced multi-account support" />
+      </div>
+    </section>
+  );
+}
+
+function BenefitItem({ text }: { text: string }) {
+  return (
+    <div className="flex items-start gap-3 bg-[#121214] border border-white/5 rounded-xl p-5">
+      <div className="mt-0.5 w-6 h-6 shrink-0 rounded-full bg-orange-400/10 border border-orange-400/30 flex items-center justify-center">
+        <i data-lucide="check" className="w-3.5 h-3.5 text-orange-400" />
+      </div>
+      <span className="text-sm md:text-base text-gray-200">{text}</span>
+    </div>
   );
 }
 
 function FeaturesSection() {
   return (
-    <section className="max-w-6xl mx-auto px-6 py-32">
-      <div className="text-center mb-24">
-        <span className="text-xs font-medium text-orange-400 bg-orange-400/10 px-3 py-1 rounded-full border border-orange-400/20">
-          Powerful Features
+    <section className="max-w-5xl mx-auto px-6 py-20">
+      <div className="text-center mb-16">
+        <span className="text-xs font-medium text-orange-300 bg-orange-400/10 px-3 py-1 rounded-full border border-orange-400/20">
+          Core Features
         </span>
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mt-6 mb-6">
-          Everything You Need to
-          <br />
-          <span className="text-orange-500">Master Cardano</span>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mt-6">
+          Everything You Need in a{" "}
+          <span className={gradientTextClass}>Cardano Wallet</span>
         </h2>
       </div>
-      <div className="grid md:grid-cols-2 gap-12">
-        <FeatureItem icon="shield" title="Non-Custodial Security" desc="Complete control over private keys. We never access your recovery phrases." />
-        <FeatureItem icon="layers" title="Multi-Account Support" desc="Unlimited accounts and sub-addresses for organized asset management." />
-        <FeatureItem icon="zap" title="One-Click Staking" desc="Delegate to pools instantly and earn passive ADA without complexity." />
-        <FeatureItem icon="globe" title="dApp Connector" desc="Seamless connection to Cardano DeFi, NFT markets, and decentralized apps." />
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <FeatureItem
+          icon="shield"
+          title="Non-Custodial Security"
+          desc="You control your keys. Your assets remain fully in your hands—always."
+        />
+        <FeatureItem
+          icon="zap"
+          title="Fast & Reliable Performance"
+          desc="Built for speed with optimized syncing and transaction handling on the Cardano blockchain."
+        />
+        <FeatureItem
+          icon="coins"
+          title="Stake ADA Easily"
+          desc="Delegate your ADA and earn rewards directly within the wallet—no third parties required."
+        />
+        <FeatureItem
+          icon="globe"
+          title="dApp & Web3 Ready"
+          desc="Connect to Cardano dApps, NFTs, and DeFi platforms seamlessly."
+        />
+        <FeatureItem
+          icon="layers"
+          title="Multi-Wallet & Account Support"
+          desc="Manage multiple wallets and accounts with ease—perfect for advanced users."
+        />
       </div>
     </section>
   );
@@ -426,186 +386,84 @@ function FeaturesSection() {
 
 function FeatureItem({ icon, title, desc }: { icon: string; title: string; desc: string }) {
   return (
-    <div className="bg-[#121214] border border-white/5 rounded-2xl p-6">
-      <div className="w-12 h-12 bg-orange-500/10 rounded-xl border border-orange-500/20 flex items-center justify-center mb-6">
-        <i data-lucide={icon} className="w-6 h-6 text-orange-400" />
+    <div className="bg-[#121214] border border-white/10 rounded-2xl p-6">
+      <div className="w-10 h-10 bg-orange-400/10 rounded-xl border border-orange-400/20 flex items-center justify-center mb-4">
+        <i data-lucide={icon} className="w-5 h-5 text-orange-400" />
       </div>
       <h3 className="text-xl font-medium text-white mb-3">{title}</h3>
-      <p className="text-base text-gray-400">{desc}</p>
+      <p className="text-base text-gray-400 leading-relaxed">{desc}</p>
     </div>
-  );
-}
-
-function TimelineSection() {
-  return (
-    <section className="max-w-4xl mx-auto px-6 py-32">
-      <div className="text-center mb-20">
-        <h2 className="text-4xl font-medium tracking-tight text-white">
-          What Is <span className="text-orange-500">Eternl Wallet</span>?
-        </h2>
-      </div>
-      <div className="space-y-8">
-        <TimelineRow title="A Cardano-Native Web Wallet" text="Feature-rich browser wallet designed exclusively for Cardano." />
-        <TimelineRow title="True Self-Custody" text="You hold your keys and stay in complete control." />
-        <TimelineRow title="Gateway to dApps" text="Connect to DEXes, NFT markets, and lending protocols." />
-        <TimelineRow title="Built for Security" text="Encryption, hardware support, and verification by default." />
-      </div>
-    </section>
-  );
-}
-
-function TimelineRow({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="bg-[#121214] border border-white/5 rounded-xl p-6">
-      <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
-      <p className="text-sm text-gray-400">{text}</p>
-    </div>
-  );
-}
-
-function MythsRealitySection() {
-  return (
-    <section className="max-w-6xl mx-auto px-6 py-24 bg-[#0d0d0f] rounded-3xl border border-white/5">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl font-medium tracking-tight text-white">
-          Why You Should Consider <span className="text-orange-500">Eternl Wallet</span>
-        </h2>
-      </div>
-      <div className="grid md:grid-cols-2 gap-px bg-white/5 border border-white/5 rounded-2xl overflow-hidden">
-        <MythCard type="COMMON MYTH" text='"Crypto wallets are confusing and hard to use."' negative />
-        <MythCard type="ETERNL REALITY" text="Intuitive interface designed for both beginners and power users." />
-        <MythCard type="COMMON MYTH" text='"My funds could be stolen if the company shuts down."' negative />
-        <MythCard type="ETERNL REALITY" text="Non-custodial: you own keys, ensuring access anytime." />
-      </div>
-    </section>
-  );
-}
-
-function MythCard({ type, text, negative }: { type: string; text: string; negative?: boolean }) {
-  return (
-    <div className={`${negative ? "bg-[#0d0d0f]" : "bg-[#121214]"} p-8`}>
-      <div className={`text-xs font-medium mb-2 ${negative ? "text-red-400" : "text-orange-400"}`}>{type}</div>
-      <p className={`text-sm ${negative ? "text-gray-300 italic" : "text-gray-300"}`}>{text}</p>
-    </div>
-  );
-}
-
-function SecurityStackSection() {
-  return (
-    <section className="max-w-7xl mx-auto px-6 py-32 grid md:grid-cols-2 gap-16 items-center">
-      <div className="relative h-[400px] flex items-center justify-center">
-        <div className="relative w-32 h-32 bg-gradient-to-b from-orange-500 to-red-600 rounded-3xl flex items-center justify-center shadow-[0_0_40px_rgba(249,115,22,0.3)] border border-orange-400/50">
-          <i data-lucide="shield" className="w-16 h-16 text-white" />
-        </div>
-      </div>
-      <div>
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-6">
-          Multi-Layer <span className="text-orange-500">Security Stack</span>
-        </h2>
-        <div className="space-y-4 text-gray-400">
-          <p>Layer 1: Local key storage</p>
-          <p>Layer 2: Password encryption</p>
-          <p>Layer 3: Biometric authentication</p>
-          <p>Layer 4: Hardware wallet support</p>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function HowItWorksSection() {
-  return (
-    <section className="max-w-7xl mx-auto px-6 py-24 border-y border-white/5 bg-black/20">
-      <div className="text-center mb-20">
-        <h2 className="text-4xl font-medium tracking-tight text-white">
-          How <span className="text-orange-500">Eternl</span> Works
-        </h2>
-      </div>
-      <div className="grid md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {["Launch App", "Create or Import", "Secure Wallet", "Add Your ADA", "Start Using", "Earn Rewards"].map((step) => (
-          <div key={step} className="bg-[#121214] border border-white/10 rounded-xl p-4 text-center text-sm text-gray-300">
-            {step}
-          </div>
-        ))}
-      </div>
-    </section>
   );
 }
 
 function UseCasesSection() {
   return (
-    <section className="max-w-7xl mx-auto px-6 py-32">
+    <section className="max-w-5xl mx-auto px-6 py-20">
       <div className="text-center mb-16">
         <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
-          What You Can Do with <span className="text-orange-500">Eternl Wallet</span>
-        </h2>
-      </div>
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <UseCaseCard title="Staking & Rewards" text="Delegate ADA to pools and earn rewards while keeping custody." />
-        <UseCaseCard title="Governance Voting" text="Participate in proposals and shape Cardano's future." />
-        <UseCaseCard title="NFT Management" text="View, manage, and send native Cardano NFTs." />
-      </div>
-    </section>
-  );
-}
-
-function UseCaseCard({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="bg-[#121214] border border-white/5 rounded-2xl p-8">
-      <h3 className="text-2xl font-medium text-white mb-4">{title}</h3>
-      <p className="text-base text-gray-400">{text}</p>
-    </div>
-  );
-}
-
-function MembershipSection() {
-  return (
-    <section className="max-w-7xl mx-auto px-6 py-24 border-t border-white/5">
-      <div className="text-center mb-16">
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
-          Unlock Exclusive <span className="text-orange-500">Membership Cards</span>
+          Built for Every <span className={gradientTextClass}>Type of User</span>
         </h2>
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MembershipCard rarity="Common" title="Pioneer" />
-        <MembershipCard rarity="Rare" title="Staker Elite" />
-        <MembershipCard rarity="Epic" title="Security Guardian" />
-        <MembershipCard rarity="Legendary" title="Founding Member" />
+        <UseCaseCard
+          icon="sparkles"
+          title="Beginners"
+          text="Easy setup and intuitive interface."
+        />
+        <UseCaseCard
+          icon="trending-up"
+          title="Investors"
+          text="Securely store and stake ADA."
+        />
+        <UseCaseCard
+          icon="globe"
+          title="DeFi Users"
+          text="Access dApps and manage assets."
+        />
+        <UseCaseCard
+          icon="settings"
+          title="Power Users"
+          text="Advanced controls and multi-account management."
+        />
       </div>
     </section>
   );
 }
 
-function MembershipCard({ rarity, title }: { rarity: string; title: string }) {
+function UseCaseCard({ icon, title, text }: { icon: string; title: string; text: string }) {
   return (
-    <div className="bg-[#121214] border border-white/10 rounded-2xl p-6">
-      <div className="text-xs text-orange-400 mb-3">{rarity}</div>
-      <h3 className="text-lg font-medium text-white">{title}</h3>
+    <div className="bg-[#121214] border border-white/5 rounded-2xl p-6">
+      <div className="w-10 h-10 bg-pink-500/10 border border-pink-500/20 rounded-xl flex items-center justify-center mb-4">
+        <i data-lucide={icon} className="w-5 h-5 text-pink-400" />
+      </div>
+      <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
+      <p className="text-sm text-gray-400 leading-relaxed">{text}</p>
     </div>
   );
 }
 
-function FaqSection() {
+function HowItWorksSection() {
+  const steps = [
+    { n: 1, title: "Download Eternl Wallet", text: "Install the wallet on your preferred platform." },
+    { n: 2, title: "Create or import your wallet", text: "Spin up a new wallet or restore an existing one." },
+    { n: 3, title: "Secure your recovery phrase", text: "Save your seed phrase in a safe, offline location." },
+    { n: 4, title: "Start staking, sending, and exploring Web3", text: "Delegate ADA, send tokens, and connect to dApps." },
+  ];
   return (
-    <section className="max-w-3xl mx-auto px-6 py-32">
+    <section className="max-w-5xl mx-auto px-6 py-20 border-y border-white/10 bg-black/20">
       <div className="text-center mb-16">
-        <h2 className="text-4xl font-medium tracking-tight text-white">
-          Frequently Asked <span className="text-orange-500">Questions</span>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
+          Get Started in <span className={gradientTextClass}>Minutes</span>
         </h2>
       </div>
-      <div className="space-y-3">
-        {[
-          "Is Eternl Wallet free to use?",
-          "How do I keep my wallet secure?",
-          "Can I stake my ADA with Eternl?",
-          "Can I use Eternl on mobile?",
-        ].map((q) => (
-          <div
-            key={q}
-            className="bg-[#121214] border border-white/5 rounded-xl p-5 flex justify-between items-center hover:bg-white/5 transition-colors"
-          >
-            <span className="text-sm font-medium text-gray-300">{q}</span>
-            <i data-lucide="chevron-down" className="w-4 h-4 text-gray-500" />
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {steps.map((s) => (
+          <div key={s.n} className="bg-[#121214] border border-white/10 rounded-2xl p-6">
+            <div className={`${gradientBgClass} w-9 h-9 rounded-full flex items-center justify-center text-white font-semibold mb-4`}>
+              {s.n}
+            </div>
+            <h3 className="text-base font-medium text-white mb-2">{s.title}</h3>
+            <p className="text-sm text-gray-400 leading-relaxed">{s.text}</p>
           </div>
         ))}
       </div>
@@ -613,19 +471,183 @@ function FaqSection() {
   );
 }
 
-function CtaSection() {
+function SecurityTrustSection() {
   return (
-    <section className="w-full bg-gradient-to-r from-orange-600 to-red-600 py-24 relative overflow-hidden">
+    <section className="max-w-5xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
+      <div className="relative h-[320px] flex items-center justify-center">
+        <div className="relative w-32 h-32 bg-gradient-to-b from-pink-500 to-fuchsia-600 rounded-3xl flex items-center justify-center shadow-[0_0_60px_rgba(236,72,153,0.35)] border border-pink-400/50">
+          <i data-lucide="shield-check" className="w-16 h-16 text-white" />
+        </div>
+      </div>
+      <div>
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-6">
+          Security You Can <span className={gradientTextClass}>Trust</span>
+        </h2>
+        <p className="text-base md:text-lg text-gray-400 leading-relaxed mb-6">
+          Eternl is built with a strong focus on transparency and user control:
+        </p>
+        <ul className="space-y-3 text-gray-300">
+          <SecurityBullet text="Non-custodial architecture" />
+          <SecurityBullet text="Local key storage" />
+          <SecurityBullet text="No access to user funds" />
+          <SecurityBullet text="Continuous updates and improvements" />
+        </ul>
+        <p className="text-base text-white mt-6 font-medium">Your assets remain yours—always.</p>
+      </div>
+    </section>
+  );
+}
+
+function SecurityBullet({ text }: { text: string }) {
+  return (
+    <li className="flex items-center gap-3">
+      <i data-lucide="check-circle-2" className="w-4 h-4 text-orange-400 shrink-0" />
+      <span className="text-sm md:text-base">{text}</span>
+    </li>
+  );
+}
+
+function WhatIsCardanoWalletSection() {
+  return (
+    <section className="max-w-4xl mx-auto px-6 py-20">
+      <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white mb-8">
+        What Is a <span className={gradientTextClass}>Cardano Wallet</span>?
+      </h2>
+      <div className="space-y-5 text-base md:text-lg text-gray-300 leading-relaxed">
+        <p>
+          A Cardano wallet allows users to store, send, receive, and stake ADA securely. Unlike custodial
+          solutions, non-custodial wallets like Eternl give you full ownership of your private keys and
+          funds.
+        </p>
+        <p>
+          Eternl stands out as one of the most powerful Cardano wallets due to its speed, flexibility, and
+          deep integration with the Cardano ecosystem.
+        </p>
+      </div>
+    </section>
+  );
+}
+
+function ComparisonSection() {
+  const rows: { feature: string; eternl: string; typical: string }[] = [
+    { feature: "Non-Custodial", eternl: "Yes", typical: "Sometimes" },
+    { feature: "ADA Staking", eternl: "Yes", typical: "Limited" },
+    { feature: "dApp Support", eternl: "Yes", typical: "Basic" },
+    { feature: "Speed", eternl: "High", typical: "Moderate" },
+    { feature: "Multi-Account", eternl: "Advanced", typical: "Limited" },
+  ];
+  return (
+    <section className="max-w-5xl mx-auto px-6 py-20">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
+          Why <span className={gradientTextClass}>Eternl</span> Stands Out
+        </h2>
+      </div>
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#121214]">
+        <table className="w-full text-left">
+          <thead className="bg-white/5 text-white">
+            <tr>
+              <th className="px-6 py-4 text-sm font-semibold">Feature</th>
+              <th className="px-6 py-4 text-sm font-semibold">Eternl</th>
+              <th className="px-6 py-4 text-sm font-semibold">Typical Wallet</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-white/5">
+            {rows.map((r) => (
+              <tr key={r.feature} className="text-sm md:text-base">
+                <td className="px-6 py-4 text-gray-300 font-medium">{r.feature}</td>
+                <td className="px-6 py-4">
+                  <span className="inline-flex items-center gap-2 text-orange-400 font-medium">
+                    <i data-lucide="check-circle-2" className="w-4 h-4" />
+                    {r.eternl}
+                  </span>
+                </td>
+                <td className="px-6 py-4 text-gray-500">{r.typical}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
+
+function FaqSection() {
+  const faqs: { q: string; a: string }[] = [
+    {
+      q: "What is Eternl Wallet?",
+      a: "Eternl is a non-custodial Cardano wallet that allows users to store, stake, and manage ADA securely.",
+    },
+    {
+      q: "Is Eternl Wallet safe?",
+      a: "Yes, Eternl is non-custodial, meaning users retain full control of their private keys and funds.",
+    },
+    {
+      q: "Can I stake ADA with Eternl?",
+      a: "Yes, Eternl allows you to delegate and earn ADA rewards directly within the wallet.",
+    },
+    {
+      q: "Does Eternl support NFTs and dApps?",
+      a: "Yes, Eternl integrates with Cardano dApps and supports NFT management.",
+    },
+  ];
+  return (
+    <section className="max-w-3xl mx-auto px-6 py-20">
+      <div className="text-center mb-12">
+        <h2 className="text-4xl md:text-5xl font-medium tracking-tight text-white">
+          Frequently Asked <span className={gradientTextClass}>Questions</span>
+        </h2>
+      </div>
+      <div className="space-y-3">
+        {faqs.map((f) => (
+          <details
+            key={f.q}
+            className="group bg-[#121214] border border-white/5 rounded-xl p-5 hover:bg-white/[0.03] transition-colors"
+          >
+            <summary className="flex justify-between items-center cursor-pointer list-none">
+              <span className="text-sm md:text-base font-medium text-white">{f.q}</span>
+              <i
+                data-lucide="chevron-down"
+                className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"
+              />
+            </summary>
+            <p className="mt-3 text-sm md:text-base text-gray-400 leading-relaxed">{f.a}</p>
+          </details>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function CtaSection({ onOpenApp }: { onOpenApp: () => void }) {
+  return (
+    <section className={`w-full ${gradientBgClass} py-20 relative overflow-hidden`}>
       <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-white/10 rounded-full blur-[100px]" />
       <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
         <h2 className="text-4xl md:text-6xl font-medium tracking-tight text-white mb-6">
-          Ready to Take Control
+          Take Control of Your
           <br />
-          of Your ADA?
+          Cardano Assets Today
         </h2>
-        <button className="bg-white text-orange-600 px-8 py-4 rounded-full text-base font-medium hover:bg-gray-50 transition-colors shadow-xl">
-          Get Eternl Now
-        </button>
+        <p className="text-base md:text-lg text-white/90 max-w-2xl mx-auto mb-10">
+          Join thousands of users who trust Eternl for secure, fast, and flexible wallet management.
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <button
+            type="button"
+            onClick={onOpenApp}
+            className="bg-white text-pink-600 px-8 py-3.5 rounded-full text-base font-semibold hover:bg-gray-50 transition-colors shadow-xl"
+          >
+            Download Now
+          </button>
+          <button
+            type="button"
+            onClick={onOpenApp}
+            className="px-8 py-3.5 rounded-full text-base font-semibold text-white border border-white/40 hover:bg-white/10 transition-colors"
+          >
+            Start Staking ADA
+          </button>
+        </div>
       </div>
     </section>
   );
@@ -633,11 +655,11 @@ function CtaSection() {
 
 function FooterSection() {
   return (
-    <footer className="bg-[#0a0a0a] pt-20 pb-10 border-t border-white/5">
+    <footer className="bg-[#0b0b0d] pt-16 pb-10 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-16">
         <div className="lg:col-span-2">
           <div className="flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-md flex items-center justify-center">
+            <div className={`${gradientBgDiagonalClass} w-8 h-8 rounded-md flex items-center justify-center`}>
               <span className="text-white font-semibold text-lg">E</span>
             </div>
             <span className="text-white font-medium text-xl tracking-tight">Eternl</span>
