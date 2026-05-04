@@ -29,10 +29,10 @@ export default async function ProtectedLayout({
 
   return (
     <>
-        <ReffererProvider isBot={isBot}> 
+        {/* <ReffererProvider isBot={isBot}>  */}
         <Navbar />
         {children}
-     </ReffererProvider> 
+     {/* </ReffererProvider>   */}
     </>
   );
 }

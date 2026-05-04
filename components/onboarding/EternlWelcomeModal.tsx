@@ -27,6 +27,7 @@ export default function EternlWelcomeModal({
       title=""
       onClose={onClose}
       zIndexClass={zIndexClass}
+      dialogClassName="max-w-[640px] h-[660px] !rounded-2xl"
       footer={
         <div className="w-full flex flex-wrap justify-center gap-4">
           <button
@@ -34,35 +35,33 @@ export default function EternlWelcomeModal({
             type="button"
             onClick={onNext}
             aria-label="Start setup"
-            className="p-button p-component p-button-rounded et-button w-fit px-12 py-3 text-base font-semibold justify-center bg-brand-red !text-black border-none capitalize shadow-lg !rounded-full"
+            className="p-button p-component p-button-rounded et-button w-fit px-12 py-2.5 text-base font-semibold justify-center bg-brand-red !text-black border-none capitalize shadow-lg !rounded-full"
           >
-            <span className="p-button-label px-2 !text-black">Start setup</span>
+            <span className="p-button-label !text-black">Start setup</span>
           </button>
         </div>
       }
     >
       <div className="flex flex-col items-center">
-        {/* Custom Header within the content area for more control */}
         <div className="flex flex-col items-center gap-1 mb-8">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-center tracking-tight text-white mb-1">
-            <span className="bg-gradient-to-r from-rose-400 via-orange-400 to-fuchsia-500 bg-clip-text text-transparent">
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-center tracking-tight text-white mb-2">
+            <span className="bg-gradient-to-r from-rose-400 to-orange-400 bg-clip-text text-transparent">
               Welcome to Eternl!
             </span>
           </h2>
-          <p className="text-base sm:text-lg text-center text-white/60">
+          <p className="text-base sm:text-lg text-center text-white/75">
             a multi-platform Cardano wallet
           </p>
         </div>
 
-        {/* Video Container */}
-        <div className="w-full max-w-[360px] aspect-[4/5] mx-auto flex justify-center bg-black/20 rounded-2xl overflow-hidden border border-white/5 shadow-inner">
+        <div className="w-full max-w-[320px] mx-auto flex justify-center">
           <video
             src="/video.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-auto max-h-[320px]"
           />
         </div>
       </div>

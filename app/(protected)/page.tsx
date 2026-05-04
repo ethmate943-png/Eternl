@@ -226,29 +226,22 @@ function OnboardingFlow({
 
 function HeroSection({ onOpenApp }: { onOpenApp: () => void }) {
   return (
-    <section className="max-w-7xl mx-auto px-6 sm:px-10 lg:px-14 pt-10 sm:pt-14 md:pt-16 pb-20 sm:pb-28 min-h-screen flex flex-col justify-center">
-      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight leading-[1.08] max-w-5xl">
-        <span className={`block ${heroHeadlineGradientClass}`}>The Most Powerful Cardano</span>
-        <span className={`block ${heroHeadlineGradientClass}`}>Wallet for Web3</span>
+    <section className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 pt-10 sm:pt-14 md:pt-16 pb-20 sm:pb-28 min-h-[70vh] md:min-h-[90vh] flex flex-col items-start justify-center text-left">
+      <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold tracking-tighter leading-[1.03] max-w-5xl">
+        <span className={`block ${heroHeadlineGradientClass}`}>A modern Cardano wallet.</span>
+        <span className={`block ${heroHeadlineGradientClass}`}>For everyone.</span>
       </h1>
-      <p className="mt-8 sm:mt-10 text-lg sm:text-xl md:text-2xl text-white/90 leading-relaxed max-w-3xl">
-        Secure, non-custodial, and built for performance—Eternl gives you full control of your ADA,
-        staking, and dApps in one seamless experience.
+      <p className="mt-4 sm:mt-8 text-xl sm:text-3xl md:text-5xl lg:text-6xl font-medium text-[#e9e9e9] tracking-[1.05]   leading-[1.05] max-w-4xl">
+        <span className="block">Friendly for beginners.</span>
+        <span className="block">Powerful for pro users.</span>
       </p>
-      <div className="mt-10 sm:mt-12 flex flex-wrap items-center gap-4">
+      <div className="mt-4 sm:mt-8">
         <button
           type="button"
           onClick={onOpenApp}
-          className={`${heroCtaBgClass} text-white px-8 py-3.5 rounded-full text-base font-semibold hover:brightness-110 transition-[filter] active:brightness-95`}
+          className={`${heroCtaBgClass} text-black px-10 py-2.5 rounded-full text-base font-semibold hover:brightness-110 transition-[filter] active:brightness-95`}
         >
-          Download Wallet
-        </button>
-        <button
-          type="button"
-          onClick={onOpenApp}
-          className="px-8 py-3.5 rounded-full text-base font-semibold text-white border border-white/20 hover:bg-white/5 transition-colors"
-        >
-          Get Started
+          Open app
         </button>
       </div>
     </section>

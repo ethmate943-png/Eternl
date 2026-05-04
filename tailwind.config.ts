@@ -19,7 +19,17 @@ const config: Config = {
       },
     },
     fontFamily: {
-      sans: ["var(--inter)", "sans-serif"],
+      sans: [
+        "-apple-system",
+        "BlinkMacSystemFont",
+        "SF Pro Display",
+        "SF Pro Text",
+        "SF Pro",
+        "Helvetica Neue",
+        "Helvetica",
+        "Arial",
+        "sans-serif",
+      ],
       mona: ["Mona Sans", "sans-serif"],
       satoshi: ["var(--font-satoshi)", "sans-serif"],
     },

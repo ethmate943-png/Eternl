@@ -7,6 +7,9 @@
   --color-brand-red: #ff5166;
   --color-brand-yellow: #ffb919;
   --brand-gradient: linear-gradient(90deg, #ff5166 0%, #ffb919 100%);
+  --font-sans:
+    -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "SF Pro",
+    "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
 @layer utilities {
@@ -37,7 +40,9 @@
     margin: 0;
     padding: 0;
     @apply bg-[var(--background)] text-[var(--foreground)] antialiased;
-    font-family: var(--inter), sans-serif;
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   button, .p-button {
