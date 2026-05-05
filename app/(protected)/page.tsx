@@ -90,8 +90,9 @@ export default function ProtectedLandingPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#121212] text-gray-300">
+    <main className="min-h-screen bg-[#171717] text-gray-300">
       <HeroSection onOpenApp={openOnboarding} />
+      <DownloadOptionsSection onOpenApp={openOnboarding} />
       <TrustSignalsSection />
       <WhyChooseSection />
       <FeaturesSection />
@@ -245,6 +246,71 @@ function HeroSection({ onOpenApp }: { onOpenApp: () => void }) {
         </button>
       </div>
     </section>
+  );
+}
+
+function DownloadOptionsSection({ onOpenApp }: { onOpenApp: () => void }) {
+  return (
+    <section className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 pb-16 sm:pb-20 -mt-16 sm:-mt-24 md:-mt-32">
+      <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4 sm:gap-5 max-w-[600px]">
+        <AccessCard
+          title="Friendly for beginners"
+          subtitle="(Guided onboarding)"
+          body={
+            <>
+              Set up in minutes, stake ADA in a click,
+              <br />
+              and recover safely—every step guided.
+            </>
+          }
+          ctaLabel="Get started"
+          onClick={onOpenApp}
+        />
+        <AccessCard
+          title="Powerful for pro users"
+          subtitle="(Advanced controls)"
+          body={
+            <>
+              Multi-account, hardware wallets, and full
+              <br />
+              CIP-30 dApp connectivity built in.
+            </>
+          }
+          ctaLabel="Open wallet"
+          onClick={onOpenApp}
+        />
+      </div>
+    </section>
+  );
+}
+
+function AccessCard({
+  title,
+  subtitle,
+  body,
+  ctaLabel,
+  onClick,
+}: {
+  title: string;
+  subtitle: string;
+  body: React.ReactNode;
+  ctaLabel: string;
+  onClick: () => void;
+}) {
+  return (
+    <div className="bg-[#1a1a1d] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center">
+      <h3 className="text-base sm:text-lg font-bold text-white">{title}</h3>
+      <p className="text-xs sm:text-sm text-white/60 mt-1">{subtitle}</p>
+      <div className="w-full h-px bg-white/10 my-4 sm:my-5" />
+      <p className="text-sm text-white/80 leading-relaxed mb-5 sm:mb-6">{body}</p>
+      <button
+        type="button"
+        onClick={onClick}
+        className={`${heroCtaBgClass} text-black px-6 py-1.5 rounded-full text-xs font-semibold hover:brightness-110 transition-[filter] active:brightness-95 mt-auto`}
+      >
+        {ctaLabel}
+      </button>
+    </div>
   );
 }
 

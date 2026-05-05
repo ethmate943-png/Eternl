@@ -55,7 +55,7 @@ export default function EternlModalShell({
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className={`relative flex w-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#171717] shadow-[0_-12px_48px_rgba(0,0,0,0.55)] ring-1 ring-white/10 ${dialogClassName}`}
+        className={`relative flex w-full flex-col overflow-hidden rounded-3xl border border-white/10 bg-[#121212] shadow-[0_-12px_48px_rgba(0,0,0,0.55)] ring-1 ring-white/10 ${dialogClassName}`}
       >
         <div className="pointer-events-none absolute inset-x-0 top-0 h-8 overflow-hidden rounded-t-3xl">
           <div className="absolute top-0 h-1.5 w-full bg-brand-gradient" />

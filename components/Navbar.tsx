@@ -3,18 +3,18 @@
 /* Navbar with gradient underline */
 export default function Navbar() {
   return (
-    <header className="sticky top-0 z-50 bg-[#121212]/95 backdrop-blur-md">
+    <header className="sticky top-0 z-50 bg-[#232323]/95 backdrop-blur-md">
       <div className="w-full">
-        <nav className="flex items-center px-6 sm:px-10 lg:px-14 pt-5 sm:pt-6 pb-4">
-          <div className="flex items-center gap-3 sm:gap-4">
+        <nav className="flex items-center px-6 sm:px-10 lg:px-14 pt-4 sm:pt-5 pb-3">
+          <div className="flex items-start gap-2 sm:gap-2">
             <div className="leading-tight">
-              <div className="text-white font-bold text-xl sm:text-2xl tracking-tight">Eternl</div>
-              <div className="text-[11px] sm:text-xs text-white/50 mt-0.5 font-medium tracking-wide">v2.0.18.4</div>
+              <div className="text-white font-bold text-base sm:text-xl tracking-tight">Eternl</div>
+              <div className="text-[10px] sm:text-[11px] text-white/30  font-medium tracking-wide">v2.0.18.4</div>
             </div>
             <img
               src="/brand/eternl.svg"
               alt="Logo"
-              className="h-8 w-8 sm:h-10 sm:w-10 rounded-md"
+               className="h-10 w-10 sm:h-8 sm:w-8 rounded-md"
             />
           </div>
 
@@ -22,7 +22,14 @@ export default function Navbar() {
         </nav>
       </div>
 
-      <div className="h-1 w-full bg-linear-to-r from-cyan-400 via-indigo-500/80 to-[#1f1828]" />
+      <div
+        className="h-[2px] w-full"
+        style={{
+          backgroundImage:
+            "linear-gradient(90deg, #44fff9 0%, #7188ff 25%, #ff5178 50%, #ffb719 75%, #d153d1 80%, rgba(209, 83, 209, 0) 100%)",
+          filter: "saturate(1.4) brightness(1.1)",
+        }}
+      />
     </header>
   );
 }

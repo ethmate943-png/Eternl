@@ -54,14 +54,17 @@ export default function EternlWelcomeModal({
           </p>
         </div>
 
-        <div className="w-full max-w-[320px] mx-auto flex justify-center">
+        <div className="w-full max-w-[320px] mx-auto flex justify-center overflow-hidden rounded-lg">
           <video
             src="/video.mp4"
             autoPlay
             loop
             muted
             playsInline
-            className="w-full h-auto max-h-[320px]"
+            controls={false}
+            disablePictureInPicture
+            controlsList="nodownload noplaybackrate noremoteplayback"
+            className="w-full h-auto max-h-[320px] object-cover scale-[1.06]"
           />
         </div>
       </div>
