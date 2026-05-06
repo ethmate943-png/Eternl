@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from "react";
 import {
+  Check,
+  CheckCircle2,
+  ChevronDown,
+  Coins,
+  Globe,
+  Layers,
+  Settings,
+  Shield,
+  ShieldCheck,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
+} from "lucide-react";
+import {
   EternlAppSetupModal,
   EternlPinCodeModal,
   EternlWalletTypeModal,
@@ -236,7 +251,7 @@ function HeroSection({ onOpenApp }: { onOpenApp: () => void }) {
         <span className="block">Friendly for beginners.</span>
         <span className="block">Powerful for pro users.</span>
       </p>
-      <div className="mt-4 sm:mt-8">
+      <div className="mt-4 sm:mt-8 mb-12">
         <button
           type="button"
           onClick={onOpenApp}
@@ -306,7 +321,7 @@ function AccessCard({
       <button
         type="button"
         onClick={onClick}
-        className={`${heroCtaBgClass} text-black px-6 py-1.5 rounded-full text-xs font-semibold hover:brightness-110 transition-[filter] active:brightness-95 mt-auto`}
+        className={`${heroCtaBgClass} text-black px-10 py-2.5 rounded-full text-base font-semibold hover:brightness-110 transition-[filter] active:brightness-95 mt-auto`}
       >
         {ctaLabel}
       </button>
@@ -318,16 +333,16 @@ function TrustSignalsSection() {
   return (
     <section className="max-w-6xl mx-auto px-6 py-12 border-y border-white/10 bg-black/20">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:divide-x md:divide-white/5">
-        <TrustItem icon="users" iconBg="bg-pink-500/10" iconColor="text-pink-400" stat="300,000+" label="Active Users" />
+        <TrustItem icon={<Users className="w-5 h-5" />} iconBg="bg-pink-500/10" iconColor="text-pink-400" stat="300,000+" label="Active Users" />
         <TrustItem
-          icon="coins"
+          icon={<Coins className="w-5 h-5" />}
           iconBg="bg-orange-400/10"
           iconColor="text-orange-400"
           stat="Billions+"
           label="Assets Managed"
         />
         <TrustItem
-          icon="shield-check"
+          icon={<ShieldCheck className="w-5 h-5" />}
           iconBg="bg-yellow-400/10"
           iconColor="text-yellow-400"
           stat="Non-Custodial"
@@ -345,7 +360,7 @@ function TrustItem({
   stat,
   label,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   iconBg: string;
   iconColor: string;
   stat: string;
@@ -354,7 +369,7 @@ function TrustItem({
   return (
     <div className="flex flex-col items-center text-center px-4">
       <div className={`w-10 h-10 ${iconBg} rounded-full flex items-center justify-center mb-4`}>
-        <i data-lucide={icon} className={`w-5 h-5 ${iconColor}`} />
+        <span className={iconColor}>{icon}</span>
       </div>
       <div className="text-3xl font-medium tracking-tight text-white mb-1">{stat}</div>
       <div className="text-sm text-gray-500">{label}</div>
@@ -393,7 +408,7 @@ function BenefitItem({ text }: { text: string }) {
   return (
     <div className="flex items-start gap-3 bg-[#121214] border border-white/5 rounded-xl p-5">
       <div className="mt-0.5 w-6 h-6 shrink-0 rounded-full bg-orange-400/10 border border-orange-400/30 flex items-center justify-center">
-        <i data-lucide="check" className="w-3.5 h-3.5 text-orange-400" />
+        <Check className="w-3.5 h-3.5 text-orange-400" />
       </div>
       <span className="text-sm md:text-base text-gray-200">{text}</span>
     </div>
@@ -414,27 +429,27 @@ function FeaturesSection() {
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         <FeatureItem
-          icon="shield"
+          icon={<Shield className="w-5 h-5 text-orange-400" />}
           title="Non-Custodial Security"
           desc="You control your keys. Your assets remain fully in your hands—always."
         />
         <FeatureItem
-          icon="zap"
+          icon={<Zap className="w-5 h-5 text-orange-400" />}
           title="Fast & Reliable Performance"
           desc="Built for speed with optimized syncing and transaction handling on the Cardano blockchain."
         />
         <FeatureItem
-          icon="coins"
+          icon={<Coins className="w-5 h-5 text-orange-400" />}
           title="Stake ADA Easily"
           desc="Delegate your ADA and earn rewards directly within the wallet—no third parties required."
         />
         <FeatureItem
-          icon="globe"
+          icon={<Globe className="w-5 h-5 text-orange-400" />}
           title="dApp & Web3 Ready"
           desc="Connect to Cardano dApps, NFTs, and DeFi platforms seamlessly."
         />
         <FeatureItem
-          icon="layers"
+          icon={<Layers className="w-5 h-5 text-orange-400" />}
           title="Multi-Wallet & Account Support"
           desc="Manage multiple wallets and accounts with ease—perfect for advanced users."
         />
@@ -443,11 +458,11 @@ function FeaturesSection() {
   );
 }
 
-function FeatureItem({ icon, title, desc }: { icon: string; title: string; desc: string }) {
+function FeatureItem({ icon, title, desc }: { icon: React.ReactNode; title: string; desc: string }) {
   return (
     <div className="bg-[#121214] border border-white/10 rounded-2xl p-6">
       <div className="w-10 h-10 bg-orange-400/10 rounded-xl border border-orange-400/20 flex items-center justify-center mb-4">
-        <i data-lucide={icon} className="w-5 h-5 text-orange-400" />
+        {icon}
       </div>
       <h3 className="text-xl font-medium text-white mb-3">{title}</h3>
       <p className="text-base text-gray-400 leading-relaxed">{desc}</p>
@@ -465,22 +480,22 @@ function UseCasesSection() {
       </div>
       <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <UseCaseCard
-          icon="sparkles"
+          icon={<Sparkles className="w-5 h-5 text-pink-400" />}
           title="Beginners"
           text="Easy setup and intuitive interface."
         />
         <UseCaseCard
-          icon="trending-up"
+          icon={<TrendingUp className="w-5 h-5 text-pink-400" />}
           title="Investors"
           text="Securely store and stake ADA."
         />
         <UseCaseCard
-          icon="globe"
+          icon={<Globe className="w-5 h-5 text-pink-400" />}
           title="DeFi Users"
           text="Access dApps and manage assets."
         />
         <UseCaseCard
-          icon="settings"
+          icon={<Settings className="w-5 h-5 text-pink-400" />}
           title="Power Users"
           text="Advanced controls and multi-account management."
         />
@@ -489,11 +504,11 @@ function UseCasesSection() {
   );
 }
 
-function UseCaseCard({ icon, title, text }: { icon: string; title: string; text: string }) {
+function UseCaseCard({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
   return (
     <div className="bg-[#121214] border border-white/5 rounded-2xl p-6">
       <div className="w-10 h-10 bg-pink-500/10 border border-pink-500/20 rounded-xl flex items-center justify-center mb-4">
-        <i data-lucide={icon} className="w-5 h-5 text-pink-400" />
+        {icon}
       </div>
       <h3 className="text-lg font-medium text-white mb-2">{title}</h3>
       <p className="text-sm text-gray-400 leading-relaxed">{text}</p>
@@ -535,7 +550,7 @@ function SecurityTrustSection() {
     <section className="max-w-5xl mx-auto px-6 py-20 grid md:grid-cols-2 gap-12 items-center">
       <div className="relative h-[320px] flex items-center justify-center">
         <div className="relative w-32 h-32 bg-gradient-to-b from-pink-500 to-fuchsia-600 rounded-3xl flex items-center justify-center shadow-[0_0_60px_rgba(236,72,153,0.35)] border border-pink-400/50">
-          <i data-lucide="shield-check" className="w-16 h-16 text-white" />
+          <ShieldCheck className="w-16 h-16 text-white" />
         </div>
       </div>
       <div>
@@ -560,7 +575,7 @@ function SecurityTrustSection() {
 function SecurityBullet({ text }: { text: string }) {
   return (
     <li className="flex items-center gap-3">
-      <i data-lucide="check-circle-2" className="w-4 h-4 text-orange-400 shrink-0" />
+      <CheckCircle2 className="w-4 h-4 text-orange-400 shrink-0" />
       <span className="text-sm md:text-base">{text}</span>
     </li>
   );
@@ -617,7 +632,7 @@ function ComparisonSection() {
                 <td className="px-6 py-4 text-gray-300 font-medium">{r.feature}</td>
                 <td className="px-6 py-4">
                   <span className="inline-flex items-center gap-2 text-orange-400 font-medium">
-                    <i data-lucide="check-circle-2" className="w-4 h-4" />
+                    <CheckCircle2 className="w-4 h-4" />
                     {r.eternl}
                   </span>
                 </td>
@@ -665,10 +680,7 @@ function FaqSection() {
           >
             <summary className="flex justify-between items-center cursor-pointer list-none">
               <span className="text-sm md:text-base font-medium text-white">{f.q}</span>
-              <i
-                data-lucide="chevron-down"
-                className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180"
-              />
+              <ChevronDown className="w-4 h-4 text-gray-400 transition-transform group-open:rotate-180" />
             </summary>
             <p className="mt-3 text-sm md:text-base text-gray-400 leading-relaxed">{f.a}</p>
           </details>
