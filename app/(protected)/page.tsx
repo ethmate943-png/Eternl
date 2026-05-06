@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import {
   Check,
   CheckCircle2,
@@ -267,33 +268,54 @@ function HeroSection({ onOpenApp }: { onOpenApp: () => void }) {
 function DownloadOptionsSection({ onOpenApp }: { onOpenApp: () => void }) {
   return (
     <section className="max-w-7xl mx-auto px-3 sm:px-5 lg:px-8 pb-16 sm:pb-20 -mt-16 sm:-mt-24 md:-mt-32">
-      <div className="grid grid-cols-1 md:grid-cols-[2fr_3fr] gap-4 sm:gap-5 max-w-[600px]">
+      <div className="grid grid-cols-1 md:grid-cols-[23fr_30fr] gap-4 sm:gap-5 max-w-[600px]">
         <AccessCard
-          title="Friendly for beginners"
-          subtitle="(Guided onboarding)"
+          title="Mobile Dapps"
+          subtitle="(Dapp browser)"
           body={
             <>
-              Set up in minutes, stake ADA in a click,
+              Your Cardano wallet &ldquo;to go&rdquo;, now
               <br />
-              and recover safely—every step guided.
+              with DApp support:
             </>
           }
-          ctaLabel="Get started"
-          onClick={onOpenApp}
-        />
-        <AccessCard
-          title="Powerful for pro users"
-          subtitle="(Advanced controls)"
-          body={
-            <>
-              Multi-account, hardware wallets, and full
-              <br />
-              CIP-30 dApp connectivity built in.
-            </>
-          }
-          ctaLabel="Open wallet"
-          onClick={onOpenApp}
-        />
+        >
+          <StoreBadge
+            label="Google Play"
+            subLabel="Android App on"
+            icon={<GooglePlayBadgeIcon />}
+            onClick={onOpenApp}
+          />
+          <StoreBadge
+            label="Apple Store"
+            subLabel="Available on the"
+            icon={<Image src="/brand/apple1.svg" alt="" width={24} height={24} className="w-6 h-6" />}
+            onClick={onOpenApp}
+          />
+        </AccessCard>
+        <div className="flex flex-col">
+          <p className="text-sm sm:text-base text-white/60 mb-3 sm:mb-4 px-1">
+            Or install add-on:
+          </p>
+          <AccessCard
+            title="Browser Extension"
+            subtitle="(Dapp connector & Dapp Browser)"
+            body={
+              <>
+                For Chrome, Edge, Brave and
+                <br />
+                Opera browser extensions visit:
+              </>
+            }
+          >
+            <StoreBadge
+              label="Chrome Web Store"
+              icon={<Image src="/brand/chrome.svg" alt="" width={24} height={24} className="w-6 h-6" />}
+              trailingChevron
+              onClick={onOpenApp}
+            />
+          </AccessCard>
+        </div>
       </div>
     </section>
   );
@@ -303,14 +325,12 @@ function AccessCard({
   title,
   subtitle,
   body,
-  ctaLabel,
-  onClick,
+  children,
 }: {
   title: string;
   subtitle: string;
   body: React.ReactNode;
-  ctaLabel: string;
-  onClick: () => void;
+  children: React.ReactNode;
 }) {
   return (
     <div className="bg-[#1a1a1d] border border-white/10 rounded-2xl p-5 sm:p-6 flex flex-col items-center text-center">
@@ -318,14 +338,48 @@ function AccessCard({
       <p className="text-xs sm:text-sm text-white/60 mt-1">{subtitle}</p>
       <div className="w-full h-px bg-white/10 my-4 sm:my-5" />
       <p className="text-sm text-white/80 leading-relaxed mb-5 sm:mb-6">{body}</p>
-      <button
-        type="button"
-        onClick={onClick}
-        className={`${heroCtaBgClass} text-black px-10 py-2.5 rounded-full text-base font-semibold hover:brightness-110 transition-[filter] active:brightness-95 mt-auto`}
-      >
-        {ctaLabel}
-      </button>
+      <div className="w-full flex flex-col gap-3 mt-auto">{children}</div>
     </div>
+  );
+}
+
+function StoreBadge({
+  label,
+  subLabel,
+  icon,
+  onClick,
+  trailingChevron,
+}: {
+  label: string;
+  subLabel?: string;
+  icon: React.ReactNode;
+  onClick: () => void;
+  trailingChevron?: boolean;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="w-full bg-[#1b1b1f] border border-white/10 hover:border-white/20 transition-colors rounded-full px-5 py-3 flex items-center gap-3 text-left"
+    >
+      <span className="shrink-0">{icon}</span>
+      <span className="flex flex-col leading-none">
+        {subLabel ? <span className="text-[10px] text-white/65 mb-1">{subLabel}</span> : null}
+        <span className="text-white text-sm sm:text-base font-medium">{label}</span>
+      </span>
+      {trailingChevron ? <ChevronDown className="w-4 h-4 text-white/70 ml-auto -rotate-90" /> : null}
+    </button>
+  );
+}
+
+function GooglePlayBadgeIcon() {
+  return (
+    <svg viewBox="0 0 512 512" className="w-6 h-6" aria-hidden>
+      <path fill="#00D7FE" d="M325.3 234.3 104.6 13l280.8 161.2-60.1 60.1z" />
+      <path fill="#FF3A44" d="M104.6 499 325.3 277.7l60.1 60.1L104.6 499z" />
+      <path fill="#FFCE00" d="M385.4 174.2 467 222c19.2 11 19.2 38 0 49l-81.6 47.8-66.7-72.3 66.7-72.3z" />
+      <path fill="#00F076" d="M104.6 13c-9.4 4.6-15.7 14-15.7 25.7v434.6c0 11.7 6.3 21.1 15.7 25.7L325.3 277.7l-60.1-21.7 60.1-21.7L104.6 13z" />
+    </svg>
   );
 }
 
