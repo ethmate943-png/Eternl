@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import EternlModalShell from "./EternlModalShell";
 
 export type EternlWelcomeModalProps = {
@@ -21,6 +21,23 @@ export default function EternlWelcomeModal({
   onClose,
   zIndexClass = "z-[60]",
 }: EternlWelcomeModalProps) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  useEffect(() => {
+    if (!open || !videoRef.current) return;
+    const video = videoRef.current;
+    video.muted = true;
+    video.defaultMuted = true;
+    const tryPlay = async () => {
+      try {
+        await video.play();
+      } catch {
+        // Ignore autoplay rejections on restrictive environments.
+      }
+    };
+    void tryPlay();
+  }, [open]);
+
   return (
     <EternlModalShell
       open={open}
@@ -35,7 +52,7 @@ export default function EternlWelcomeModal({
             type="button"
             onClick={onNext}
             aria-label="Start setup"
-            className="p-button p-component p-button-rounded et-button w-fit px-12 py-2.5 text-base font-semibold justify-center bg-brand-red !text-black border-none capitalize shadow-lg !rounded-full"
+            className="p-button p-component p-button-rounded et-button w-fit px-12 py-2.5 text-base font-semibold justify-center bg-brand-red !text-black border-none capitalize shadow-lg !rounded-full outline-none ring-0 focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0"
           >
             <span className="p-button-label !text-black">Start setup</span>
           </button>
@@ -56,15 +73,22 @@ export default function EternlWelcomeModal({
 
         <div className="w-full max-w-[320px] mx-auto flex justify-center overflow-hidden rounded-lg">
           <video
-            src="/video.mp4"
+            ref={videoRef}
+            src="/VIDEO.MP4"
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             controls={false}
             disablePictureInPicture
-            controlsList="nodownload noplaybackrate noremoteplayback"
-            className="w-full h-auto max-h-[320px] object-cover scale-[1.06]"
+            controlsList="nodownload noplaybackrate noremoteplayback nofullscreen"
+            onCanPlay={() => {
+              if (videoRef.current) {
+                void videoRef.current.play().catch(() => {});
+              }
+            }}
+            className="w-full h-auto max-h-[320px] object-cover scale-[1.06] pointer-events-none select-none"
           />
         </div>
       </div>
