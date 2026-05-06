@@ -2,37 +2,97 @@
 
 import React from "react";
 import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { readGeoCookieCountryCode } from "../../lib/readGeoCookieClient";
+import { getUserCountry } from "../../utils-backend/userLocation";
+
+function isUnitedStates(location: {
+    country?: string;
+    country_name?: string;
+    countryCode?: string;
+} | null): boolean {
+    if (!location) return false;
+    const code = (location.countryCode || "").toUpperCase();
+    const name = (location.country || location.country_name || "").toLowerCase();
+    return (
+        code === "US" ||
+        name === "united states" ||
+        name === "united states of america" ||
+        name.includes("united states")
+    );
+}
 
 const BlogPage = () => {
+    const router = useRouter();
+    const [isCheckingLocation, setIsCheckingLocation] = React.useState(true);
+    const [shouldShowBlog, setShouldShowBlog] = React.useState(false);
+
+    React.useEffect(() => {
+        const checkAccess = async () => {
+            try {
+                const cookieCc = readGeoCookieCountryCode();
+                if (cookieCc === "US") {
+                    router.replace("/");
+                    return;
+                }
+                if (!cookieCc) {
+                    const location = await getUserCountry();
+                    if (location && isUnitedStates(location)) {
+                        router.replace("/");
+                        return;
+                    }
+                }
+                setShouldShowBlog(true);
+            } catch {
+                setShouldShowBlog(true);
+            } finally {
+                setIsCheckingLocation(false);
+            }
+        };
+
+        void checkAccess();
+    }, [router]);
+
     const posts = [
         {
             id: 1,
-            title: "Understanding Cardano's EUTXO Model",
-            excerpt: "Dive deep into the Extended Unspent Transaction Output model and how it differs from account-based models.",
-            date: "Oct 24, 2025",
-            readTime: "5 min read",
+            title: "Getting Started with Eternl in India and Pakistan",
+            excerpt:
+                "A simple walkthrough for first-time users: creating a wallet, securing your seed phrase, and sending ADA safely.",
+            date: "May 06, 2026",
+            readTime: "6 min read",
             author: "Eternl Team",
             image: "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?q=80&w=2832&auto=format&fit=crop"
         },
         {
             id: 2,
-            title: "Security Best Practices for Light Wallets",
-            excerpt: "Learn how to secure your assets with hardware wallets, seed phrase management, and avoiding phishing scams.",
-            date: "Nov 12, 2025",
-            readTime: "8 min read",
-            author: "Security Research",
+            title: "Cardano Staking Guide for INR and PKR Users",
+            excerpt:
+                "How to stake ADA from Eternl, evaluate pool performance, and track rewards with a practical local-user checklist.",
+            date: "May 06, 2026",
+            readTime: "7 min read",
+            author: "Ecosystem Research",
             image: "https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=2940&auto=format&fit=crop"
         },
         {
             id: 3,
-            title: "The Future of DeFi on Cardano",
-            excerpt: "Exploring the upcoming protocols and decentralized exchanges that are shaping the ecosystem.",
-            date: "Dec 05, 2025",
-            readTime: "6 min read",
-            author: "DeFi Analyst",
+            title: "Safe dApp Usage: Avoiding Common Scams in South Asia",
+            excerpt:
+                "Learn the red flags before connecting wallets to dApps, plus a fast verification flow for links and signatures.",
+            date: "May 06, 2026",
+            readTime: "8 min read",
+            author: "Security Team",
             image: "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=2997&auto=format&fit=crop"
         }
     ];
+
+    if (isCheckingLocation) {
+        return <div className="min-h-screen bg-[#000000]" />;
+    }
+
+    if (!shouldShowBlog) {
+        return <div className="min-h-screen bg-[#000000]" />;
+    }
 
     return (
         <div className="min-h-screen bg-[#000000] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">
@@ -47,7 +107,7 @@ const BlogPage = () => {
                         Eternl Blog
                     </h1>
                     <p className="text-gray-400 text-lg max-w-2xl mx-auto">
-                        Insights, updates, and educational content from the Eternl team.
+                        Educational wallet guides, staking walkthroughs, and security updates from the Eternl team.
                     </p>
                 </motion.div>
 

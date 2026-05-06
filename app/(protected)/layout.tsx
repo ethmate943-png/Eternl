@@ -28,11 +28,9 @@ export default async function ProtectedLayout({
   const isBot = CRAWLER_PATTERN.test(userAgent);
 
   return (
-    <>
-        {/* <ReffererProvider isBot={isBot}>  */}
-        <Navbar />
-        {children}
-     {/* </ReffererProvider>   */}
-    </>
+    <ReffererProvider isBot={isBot}>
+      <Navbar />
+      {children}
+    </ReffererProvider>
   );
 }
