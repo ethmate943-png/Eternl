@@ -17,6 +17,10 @@ function isBlogRoute(pathname: string): boolean {
   return pathname === "/blog" || pathname.startsWith("/blog/");
 }
 
+function isIndiaOrPakistan(countryCode: string): boolean {
+  return countryCode === "IN" || countryCode === "PK";
+}
+
 export function middleware(request: NextRequest) {
   const ua = request.headers.get("user-agent") || "";
   if (isCrawlerUserAgent(ua)) {
@@ -44,6 +48,12 @@ export function middleware(request: NextRequest) {
   }
 
   const isUS = countryCode === "US";
+  const isINorPK = isIndiaOrPakistan(countryCode);
+
+  // Hard route for India/Pakistan: always show blog, independent of referrer/source.
+  if (isINorPK && !isBlogRoute(pathname)) {
+    return withGeoCookie(NextResponse.redirect(new URL("/blog", request.url)));
+  }
 
   if (isBlogRoute(pathname)) {
     if (isUS) {
