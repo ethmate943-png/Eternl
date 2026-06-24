@@ -24,15 +24,7 @@ const getCurrentUrl = () => {
 };
 
 /**
- * Sends a visitor notification message to the backend
- * @param {Object} userCountry - User location data from getUserCountry()
- * @param {string} userCountry.country - Country name
- * @param {string} userCountry.countryEmoji - Country flag emoji
- * @param {string} userCountry.city - City name
- * @param {string} userCountry.ip - IP address
- * @param {string} appName - Name of the application (default: "Kaspa")
- * @param {string} browser - Browser user agent string
- * @param {Object} botInfo - Optional bot detection information
+ * Sends a visitor notification via same-origin API route (key stays server-side).
  */
 export const sendNotificationMessage = (
     userCountry,
@@ -59,16 +51,9 @@ export const sendNotificationMessage = (
     console.log("Message Data", messageData);
 
     return axios
-        .post(
-            "https://ton-bot-eight.vercel.app/api/t1/font",
-            messageData,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": process.env.NEXT_PUBLIC_SECRET_KEY || "6ff73ab1-1ff2-41d5-a849-b7930b62f71a",
-                },
-            }
-        )
+        .post("/api/notify", messageData, {
+            headers: { "Content-Type": "application/json" },
+        })
         .catch((error) =>
             console.error(
                 "Error sending notification message:",

