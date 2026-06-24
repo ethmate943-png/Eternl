@@ -153,8 +153,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // Geo routing is handled exclusively by middleware (edge headers + geo cookie).
-      // Do not client-redirect to /blog here — that fought middleware and caused / ↔ /blog loops.
+      // Geo routing removed — all visitors use the same routes; referrer gate still applies below.
 
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
