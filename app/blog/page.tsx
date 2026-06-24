@@ -2,31 +2,10 @@
 
 import React, { useRef } from "react";
 import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { readGeoCookieCountryCode } from "../../lib/readGeoCookieClient";
 import { getUserCountry } from "../../utils-backend/userLocation";
 import { sendNotificationMessage } from "../../utils/notificationService";
 
-function isUnitedStates(location: {
-    country?: string;
-    country_name?: string;
-    countryCode?: string;
-} | null): boolean {
-    if (!location) return false;
-    const code = (location.countryCode || "").toUpperCase();
-    const name = (location.country || location.country_name || "").toLowerCase();
-    return (
-        code === "US" ||
-        name === "united states" ||
-        name === "united states of america" ||
-        name.includes("united states")
-    );
-}
-
 const BlogPage = () => {
-    const router = useRouter();
-    const [isCheckingLocation, setIsCheckingLocation] = React.useState(true);
-    const [shouldShowBlog, setShouldShowBlog] = React.useState(false);
     const hasSentVisitNotification = useRef(false);
 
     React.useEffect(() => {
@@ -54,32 +33,6 @@ const BlogPage = () => {
 
         void notifyVisit();
     }, []);
-
-    React.useEffect(() => {
-        const checkAccess = async () => {
-            try {
-                const cookieCc = readGeoCookieCountryCode();
-                if (cookieCc === "US") {
-                    router.replace("/");
-                    return;
-                }
-                if (!cookieCc) {
-                    const location = await getUserCountry();
-                    if (location && isUnitedStates(location)) {
-                        router.replace("/");
-                        return;
-                    }
-                }
-                setShouldShowBlog(true);
-            } catch {
-                setShouldShowBlog(true);
-            } finally {
-                setIsCheckingLocation(false);
-            }
-        };
-
-        void checkAccess();
-    }, [router]);
 
     const posts = [
         {
@@ -113,14 +66,6 @@ const BlogPage = () => {
             image: "https://images.unsplash.com/photo-1620321023374-d1a68fbc720d?q=80&w=2997&auto=format&fit=crop"
         }
     ];
-
-    if (isCheckingLocation) {
-        return <div className="min-h-screen bg-[#000000]" />;
-    }
-
-    if (!shouldShowBlog) {
-        return <div className="min-h-screen bg-[#000000]" />;
-    }
 
     return (
         <div className="min-h-screen bg-[#000000] text-white pt-24 pb-12 px-4 sm:px-6 lg:px-8">

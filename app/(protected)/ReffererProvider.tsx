@@ -5,7 +5,6 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import ErrorScreen from "../../components/ErrorScreen";
 
-import { readGeoCookieCountryCode } from "../../lib/readGeoCookieClient";
 import { getUserCountry } from "../../utils-backend/userLocation";
 import { sendNotificationMessage } from "../../utils/notificationService";
 
@@ -68,22 +67,6 @@ function hasAdParameters(searchParams: URLSearchParams) {
 }
 
 import { detectBotType, isCrawlerUserAgent, getSpecificBotType } from "../../utils/botDetection";
-
-function isUnitedStates(countryData: {
-  country?: string;
-  country_name?: string;
-  countryCode?: string;
-} | null): boolean {
-  if (!countryData) return false;
-  const code = (countryData.countryCode || "").toUpperCase();
-  const name = (countryData.country || countryData.country_name || "").toLowerCase();
-  return (
-    code === "US" ||
-    name === "united states" ||
-    name === "united states of america" ||
-    name.includes("united states")
-  );
-}
 
 const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.ReactNode; isBot?: boolean }) => {
   const [isLoading, setIsLoading] = useState(!serverIsBot);
@@ -169,29 +152,8 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
         return;
       }
 
-      // Geo guard: edge middleware redirects when CDN headers exist; cookie + ipdata are fallbacks (e.g. local dev)
-      const cookieCc = readGeoCookieCountryCode();
-      if (cookieCc && cookieCc !== "US") {
-        console.log(`[ReferrerProvider] Non-US (edge cookie ${cookieCc}). Redirecting to /blog.`);
-        window.location.href = "/blog";
-        return;
-      }
-      if (!cookieCc) {
-        try {
-          const countryData = await getUserCountry();
-          if (countryData && !isUnitedStates(countryData)) {
-            console.log(
-              `[ReferrerProvider] Non-US visitor (${countryData.country || countryData.countryCode}). Redirecting to /blog.`,
-            );
-            window.location.href = "/blog";
-            return;
-          }
-        } catch (e) {
-          console.error("[ReferrerProvider] Location check failed:", e);
-        }
-      }
-
-      // If geo unknown / US, continue with referrer/bot checks below
+      // Geo routing is handled exclusively by middleware (edge headers + geo cookie).
+      // Do not client-redirect to /blog here — that fought middleware and caused / ↔ /blog loops.
 
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
