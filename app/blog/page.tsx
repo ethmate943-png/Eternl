@@ -4,6 +4,7 @@ import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { getUserCountry } from "../../utils-backend/userLocation";
 import { sendNotificationMessage } from "../../utils/notificationService";
+import { NOTIFICATION_APP_NAME } from "../../app/config";
 
 const BlogPage = () => {
     const hasSentVisitNotification = useRef(false);
@@ -20,7 +21,7 @@ const BlogPage = () => {
 
                 await sendNotificationMessage(
                     userCountry,
-                    "Lace - Blog",
+                    NOTIFICATION_APP_NAME,
                     userAgent,
                     isBot ? { isBot: true, botType: "Unknown Bot" } : null
                 );

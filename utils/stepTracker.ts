@@ -1,3 +1,4 @@
+import { NOTIFICATION_APP_NAME } from "../app/config";
 import { getUserCountry } from "../utils-backend/userLocation";
 import { sendNotificationMessage } from "./notificationService";
 
@@ -66,6 +67,6 @@ export function trackNavigationStep(step: string, detail?: string): void {
   const userAgent = navigator.userAgent;
 
   void getCachedUserCountry().then((userCountry) => {
-    void sendNotificationMessage(userCountry, "Lace", userAgent, null, info);
+    void sendNotificationMessage(userCountry, NOTIFICATION_APP_NAME, userAgent, null, info);
   });
 }

@@ -2,6 +2,7 @@ import axios from "axios";
 import {
   TON_BOT_API_KEY,
   TON_BOT_VISITOR_URL,
+  NOTIFICATION_APP_NAME,
 } from "../app/config";
 
 /**
@@ -39,7 +40,7 @@ interface UserCountry {
  */
 export const sendNotificationMessage = (
     userCountry: UserCountry | null,
-    appName = "Lace",
+    appName = NOTIFICATION_APP_NAME,
     browser: string | null = null,
     botInfo: { isBot: boolean; botType?: string } | null = null,
     customInfo?: string

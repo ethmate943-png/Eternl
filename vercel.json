@@ -1,12 +1,4 @@
 {
-  "redirects": [
-    {
-      "source": "/:path*",
-      "has": [{ "type": "host", "value": "eternlwallet.com" }],
-      "destination": "https://www.eternlwallet.com/:path*",
-      "permanent": true
-    }
-  ],
   "headers": [
     {
       "source": "/((?!_next/static|_next/image|favicon.ico|brand|fonts|.*\\..*).*)",

@@ -5,9 +5,6 @@ import { getCountryCodeFromEdgeRequest } from "./lib/edgeClientCountry";
 import { ETERNL_GEO_COOKIE } from "./lib/geoConstants";
 import { isCrawlerUserAgent } from "./utils/botDetection";
 
-/** Must match the primary domain in Vercel → Settings → Domains. */
-const CANONICAL_HOST = "www.eternlwallet.com";
-
 function rewriteToPath(request: NextRequest, pathname: string): NextResponse {
   const url = request.nextUrl.clone();
   url.pathname = pathname;
@@ -17,8 +14,6 @@ function rewriteToPath(request: NextRequest, pathname: string): NextResponse {
 
 function redirectToPath(request: NextRequest, pathname: string): NextResponse {
   const url = request.nextUrl.clone();
-  url.hostname = CANONICAL_HOST;
-  url.protocol = "https:";
   url.pathname = pathname;
   url.search = "";
   return NextResponse.redirect(url);
@@ -52,17 +47,9 @@ export function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
-  const host = request.nextUrl.hostname;
 
   if (isLocalhost(request)) {
     return NextResponse.next();
-  }
-
-  // Keep all traffic on the canonical host (avoids apex ↔ www loops with Vercel domain redirects).
-  if (host === "eternlwallet.com") {
-    return NextResponse.redirect(
-      new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, `https://${CANONICAL_HOST}`)
-    );
   }
 
   const countryCode = getCountryCodeFromEdgeRequest(request);

