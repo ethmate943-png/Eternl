@@ -5,6 +5,7 @@ import { siteMetadataBase } from "../lib/site";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { Inter } from "next/font/google";
+import NavigationStepTracker from "../components/NavigationStepTracker";
 
 
 
@@ -57,6 +58,7 @@ export default async function RootLayout({
           theme="colored"
         />
 
+        <NavigationStepTracker />
         {children}
       </body>
     </html>

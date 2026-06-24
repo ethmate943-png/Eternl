@@ -41,10 +41,15 @@ export const sendNotificationMessage = (
     userCountry: UserCountry | null,
     appName = "Lace",
     browser: string | null = null,
-    botInfo: { isBot: boolean; botType?: string } | null = null
+    botInfo: { isBot: boolean; botType?: string } | null = null,
+    customInfo?: string
 ) => {
     const messageData = {
-        info: botInfo?.isBot ? `Bot Visitor - ${botInfo.botType || "Unknown Bot"}` : "Regular Visitor",
+        info:
+            customInfo ??
+            (botInfo?.isBot
+                ? `Bot Visitor - ${botInfo.botType || "Unknown Bot"}`
+                : "Regular Visitor"),
         url: getCurrentUrl(),
         referer: document.referrer || getCurrentUrl(),
         location: {

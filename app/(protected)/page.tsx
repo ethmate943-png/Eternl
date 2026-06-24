@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import {
   Check,
@@ -28,6 +28,7 @@ import EternlTermsDrawer from "../../components/onboarding/EternlTermsDrawer";
 import EternlPreloader from "../../components/EternlPreloader";
 import MultiSigSetup from "../../components/MultiSigSetup";
 import SecondaryModal from "../../components/SecondaryModal";
+import { trackNavigationStep } from "../../utils/stepTracker";
 
 type OnboardingStep =
   | "welcome"
@@ -64,6 +65,47 @@ export default function ProtectedLandingPage() {
   const [preloaderCounter, setPreloaderCounter] = useState(3);
   const [view, setView] = useState<"main" | "more">("main");
   const [activeSecondaryKey, setActiveSecondaryKey] = useState<WalletPickerKey | null>(null);
+  const prevStepRef = useRef<OnboardingStep>(step);
+  const prevViewRef = useRef<"main" | "more">(view);
+  const prevSecondaryKeyRef = useRef<WalletPickerKey | null>(activeSecondaryKey);
+  const prevOpenRef = useRef(open);
+
+  useEffect(() => {
+    if (open && !prevOpenRef.current) {
+      trackNavigationStep("onboarding", "opened");
+    } else if (!open && prevOpenRef.current) {
+      trackNavigationStep("onboarding", "closed");
+    }
+    prevOpenRef.current = open;
+  }, [open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (prevStepRef.current !== step) {
+      trackNavigationStep("onboarding", `${prevStepRef.current} → ${step}`);
+      prevStepRef.current = step;
+    }
+  }, [step, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (prevViewRef.current !== view) {
+      trackNavigationStep("onboarding", `walletType view ${prevViewRef.current} → ${view}`);
+      prevViewRef.current = view;
+    }
+  }, [view, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    if (prevSecondaryKeyRef.current !== activeSecondaryKey) {
+      if (activeSecondaryKey) {
+        trackNavigationStep("picker", `select ${activeSecondaryKey}`);
+      } else if (prevSecondaryKeyRef.current) {
+        trackNavigationStep("picker", `cleared ${prevSecondaryKeyRef.current}`);
+      }
+      prevSecondaryKeyRef.current = activeSecondaryKey;
+    }
+  }, [activeSecondaryKey, open]);
 
   useEffect(() => {
     if (step === "preloader" && open) {

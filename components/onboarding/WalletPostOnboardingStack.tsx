@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import EternlMnemonicPhraseModal from "./EternlMnemonicPhraseModal";
 import EternlRestoreMnemonicEntryModal, {
   seedOptionToWordCount,
@@ -11,6 +11,7 @@ import EternlHardwareConnectModal from "./EternlHardwareConnectModal";
 import EternlTermsDrawer from "./EternlTermsDrawer";
 import EternlWalletTypeModal from "./EternlWalletTypeModal";
 import type { NetworkOption } from "./EternlNetworkSwitcherModal";
+import { trackNavigationStep } from "../../utils/stepTracker";
 
 export type WalletPostOnboardingStackProps = {
   open: boolean;
@@ -40,6 +41,10 @@ export type WalletPostOnboardingStackProps = {
 
 type SubView = null | "mnemonic" | "seedType" | "restoreEntry" | "hardware";
 
+function subViewLabel(view: SubView): string {
+  return view ?? "picker";
+}
+
 /**
  * After the PIN preloader: terms (z-75) → picker (z-65) → new-wallet mnemonic
  * or seed type → **restore entry** (same word count as chosen type).
@@ -58,12 +63,18 @@ export default function WalletPostOnboardingStack({
   const [subView, setSubView] = useState<SubView>(null);
   const [restoreLength, setRestoreLength] =
     useState<SeedPhraseLengthOption | null>(null);
+  const prevTermsOpenRef = useRef(termsOpen);
+  const prevSubViewRef = useRef<SubView>(subView);
+  const prevRestoreLengthRef = useRef<SeedPhraseLengthOption | null>(restoreLength);
 
   useEffect(() => {
     if (!open) {
       setTermsOpen(showTerms);
       setSubView(null);
       setRestoreLength(null);
+      prevTermsOpenRef.current = showTerms;
+      prevSubViewRef.current = null;
+      prevRestoreLengthRef.current = null;
       return;
     }
 
@@ -72,7 +83,48 @@ export default function WalletPostOnboardingStack({
     setRestoreLength(
       initialSubView === "restoreEntry" ? initialRestoreLength ?? null : null
     );
+    prevTermsOpenRef.current = showTerms;
+    prevSubViewRef.current = initialSubView;
+    prevRestoreLengthRef.current =
+      initialSubView === "restoreEntry" ? initialRestoreLength ?? null : null;
   }, [open, showTerms, initialSubView, initialRestoreLength]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (prevTermsOpenRef.current !== termsOpen) {
+      if (termsOpen) {
+        trackNavigationStep("walletFlow", "terms opened");
+      } else if (prevTermsOpenRef.current) {
+        trackNavigationStep("walletFlow", "terms confirmed");
+      }
+      prevTermsOpenRef.current = termsOpen;
+    }
+  }, [termsOpen, open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (prevSubViewRef.current !== subView) {
+      trackNavigationStep(
+        "walletFlow",
+        `${subViewLabel(prevSubViewRef.current)} → ${subViewLabel(subView)}`
+      );
+      prevSubViewRef.current = subView;
+    }
+  }, [subView, open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    if (restoreLength != null && prevRestoreLengthRef.current !== restoreLength) {
+      trackNavigationStep(
+        "walletFlow",
+        `seed length ${seedOptionToWordCount(restoreLength)}`
+      );
+      prevRestoreLengthRef.current = restoreLength;
+    }
+  }, [restoreLength, open]);
 
   if (!open) return null;
 
