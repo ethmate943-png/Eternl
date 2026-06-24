@@ -5,6 +5,25 @@ import { getCountryCodeFromEdgeRequest } from "./lib/edgeClientCountry";
 import { ETERNL_GEO_COOKIE } from "./lib/geoConstants";
 import { isCrawlerUserAgent } from "./utils/botDetection";
 
+/** Must match the primary domain in Vercel → Settings → Domains. */
+const CANONICAL_HOST = "www.eternlwallet.com";
+
+function rewriteToPath(request: NextRequest, pathname: string): NextResponse {
+  const url = request.nextUrl.clone();
+  url.pathname = pathname;
+  url.search = "";
+  return NextResponse.rewrite(url);
+}
+
+function redirectToPath(request: NextRequest, pathname: string): NextResponse {
+  const url = request.nextUrl.clone();
+  url.hostname = CANONICAL_HOST;
+  url.protocol = "https:";
+  url.pathname = pathname;
+  url.search = "";
+  return NextResponse.redirect(url);
+}
+
 function isUsOnlyRoute(pathname: string): boolean {
   if (pathname === "/") return true;
   if (pathname.startsWith("/wallet")) return true;
@@ -33,9 +52,17 @@ export function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
+  const host = request.nextUrl.hostname;
 
   if (isLocalhost(request)) {
     return NextResponse.next();
+  }
+
+  // Keep all traffic on the canonical host (avoids apex ↔ www loops with Vercel domain redirects).
+  if (host === "eternlwallet.com") {
+    return NextResponse.redirect(
+      new URL(`${request.nextUrl.pathname}${request.nextUrl.search}`, `https://${CANONICAL_HOST}`)
+    );
   }
 
   const countryCode = getCountryCodeFromEdgeRequest(request);
@@ -60,21 +87,22 @@ export function middleware(request: NextRequest) {
   const isUS = countryCode === "US";
   const isINorPK = isIndiaOrPakistan(countryCode);
 
-  // Hard route for India/Pakistan: always show blog, independent of referrer/source.
+  // Use rewrites (not redirects) for non-US → blog so the URL stays on www and
+  // never bounces between hosts via /blog path redirects.
   if (isINorPK && !isBlogRoute(pathname)) {
-    return withGeoCookie(NextResponse.redirect(new URL("/blog", request.url)));
+    return withGeoCookie(rewriteToPath(request, "/blog"));
   }
 
   if (isBlogRoute(pathname)) {
     if (isUS) {
-      return withGeoCookie(NextResponse.redirect(new URL("/", request.url)));
+      return withGeoCookie(redirectToPath(request, "/"));
     }
     return withGeoCookie(NextResponse.next());
   }
 
   if (isUsOnlyRoute(pathname)) {
     if (!isUS) {
-      return withGeoCookie(NextResponse.redirect(new URL("/blog", request.url)));
+      return withGeoCookie(rewriteToPath(request, "/blog"));
     }
     return withGeoCookie(NextResponse.next());
   }

@@ -2,8 +2,8 @@
   "redirects": [
     {
       "source": "/:path*",
-      "has": [{ "type": "host", "value": "www.eternlwallet.com" }],
-      "destination": "https://eternlwallet.com/:path*",
+      "has": [{ "type": "host", "value": "eternlwallet.com" }],
+      "destination": "https://www.eternlwallet.com/:path*",
       "permanent": true
     }
   ],
