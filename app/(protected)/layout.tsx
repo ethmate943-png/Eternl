@@ -2,6 +2,9 @@ import { headers } from "next/headers";
 import Navbar from "../../components/Navbar";
 import ReffererProvider from "./ReffererProvider";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 // Get user-agent from request; some hosts (Cloudflare, Vercel, etc.) pass it in different headers
 function getEffectiveUserAgent(headersList: Headers): string {
   const ua =

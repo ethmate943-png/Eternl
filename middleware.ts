@@ -17,6 +17,11 @@ function isBlogRoute(pathname: string): boolean {
   return pathname === "/blog" || pathname.startsWith("/blog/");
 }
 
+function isLocalhost(request: NextRequest): boolean {
+  const host = request.nextUrl.hostname;
+  return host === "localhost" || host === "127.0.0.1" || host === "[::1]";
+}
+
 function isIndiaOrPakistan(countryCode: string): boolean {
   return countryCode === "IN" || countryCode === "PK";
 }
@@ -28,6 +33,11 @@ export function middleware(request: NextRequest) {
   }
 
   const pathname = request.nextUrl.pathname;
+
+  if (isLocalhost(request)) {
+    return NextResponse.next();
+  }
+
   const countryCode = getCountryCodeFromEdgeRequest(request);
 
   const cookieOpts = {

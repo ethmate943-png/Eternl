@@ -140,6 +140,20 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
       console.log("[ReferrerProvider] Checking access for path:", pathname);
 
+      const currentUrl = new URL(window.location.href);
+      const isLocalDev =
+        currentUrl.hostname === "localhost" ||
+        currentUrl.hostname === "127.0.0.1" ||
+        currentUrl.hostname === "[::1]";
+
+      // Allow localhost development without geo or referrer checks
+      if (isLocalDev) {
+        console.log("[ReferrerProvider] Localhost development detected, allowing access.");
+        setIsFromSearch(true);
+        setIsLoading(false);
+        return;
+      }
+
       // Crawlers always get full HTML for indexing (skip geo + referrer gates)
       if (serverIsBot) {
         setIsVerifiedBot(true);
@@ -181,19 +195,10 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
       // Search engine or allowed referrer logic
       const referrer = document.referrer;
-      const currentUrl = new URL(window.location.href);
 
       console.log("[ReferrerProvider] Current URL:", currentUrl.href);
       console.log("[ReferrerProvider] Referrer URL:", referrer);
       console.log("[ReferrerProvider] Comparing referrer with allowed domains...");
-
-      // Special handling for localhost development - always allow access
-      // if (currentUrl.includes("localhost") || currentUrl.includes("127.0.0.1")) {
-      //   console.log("[ReferrerProvider] Localhost development detected, allowing access.");
-      //   setIsFromSearch(true);
-      //   setIsLoading(false);
-      //   return;
-      // }
 
       const isAllowedReferrer = isFromAllowedSource(referrer);
       // Only allow if referrer host is a real search engine. Ad params (gclid, utm_*) alone do NOT grant access.
@@ -232,7 +237,7 @@ const ReferrerProvider = ({ children, isBot: serverIsBot }: { children: React.Re
 
           await sendNotificationMessage(
             userCountry,
-            "Eternl", // Your app name
+            "Lace",
             userAgent,
             isBot ? { isBot: true, botType: specificBotType || "Unknown Bot" } : null
           );

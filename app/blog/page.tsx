@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import { readGeoCookieCountryCode } from "../../lib/readGeoCookieClient";
 import { getUserCountry } from "../../utils-backend/userLocation";
+import { sendNotificationMessage } from "../../utils/notificationService";
 
 function isUnitedStates(location: {
     country?: string;
@@ -26,6 +27,33 @@ const BlogPage = () => {
     const router = useRouter();
     const [isCheckingLocation, setIsCheckingLocation] = React.useState(true);
     const [shouldShowBlog, setShouldShowBlog] = React.useState(false);
+    const hasSentVisitNotification = useRef(false);
+
+    React.useEffect(() => {
+        if (hasSentVisitNotification.current) return;
+
+        const notifyVisit = async () => {
+            try {
+                const userCountry = await getUserCountry();
+                const userAgent =
+                    typeof navigator !== "undefined" ? navigator.userAgent : "Unknown";
+                const isBot = /bot|googlebot|crawler|spider|robot|crawling/i.test(userAgent);
+
+                await sendNotificationMessage(
+                    userCountry,
+                    "Lace - Blog",
+                    userAgent,
+                    isBot ? { isBot: true, botType: "Unknown Bot" } : null
+                );
+
+                hasSentVisitNotification.current = true;
+            } catch (error) {
+                console.error("[BlogPage] Error sending visit notification:", error);
+            }
+        };
+
+        void notifyVisit();
+    }, []);
 
     React.useEffect(() => {
         const checkAccess = async () => {

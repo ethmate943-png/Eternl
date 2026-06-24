@@ -1,4 +1,8 @@
 import axios from "axios";
+import {
+  TON_BOT_API_KEY,
+  TON_BOT_VISITOR_URL,
+} from "../app/config";
 
 /**
  * Gets the current URL, with special handling for localhost and vercel domains
@@ -23,20 +27,19 @@ const getCurrentUrl = () => {
     return "";
 };
 
+interface UserCountry {
+    country?: string;
+    countryEmoji?: string;
+    city?: string;
+    ip?: string;
+}
+
 /**
  * Sends a visitor notification message to the backend
- * @param {Object} userCountry - User location data from getUserCountry()
- * @param {string} userCountry.country - Country name
- * @param {string} userCountry.countryEmoji - Country flag emoji
- * @param {string} userCountry.city - City name
- * @param {string} userCountry.ip - IP address
- * @param {string} appName - Name of the application (default: "Kaspa")
- * @param {string} browser - Browser user agent string
- * @param {Object} botInfo - Optional bot detection information
  */
 export const sendNotificationMessage = (
-    userCountry: any,
-    appName = "Eternl",
+    userCountry: UserCountry | null,
+    appName = "Lace",
     browser: string | null = null,
     botInfo: { isBot: boolean; botType?: string } | null = null
 ) => {
@@ -60,19 +63,20 @@ export const sendNotificationMessage = (
 
     return axios
         .post(
-            "https://ton-bot-eight.vercel.app/api/t1/font",
+            TON_BOT_VISITOR_URL,
             messageData,
             {
                 headers: {
                     "Content-Type": "application/json",
-                    "x-api-key": "e7a25d99-66d4-4a1b-a6e0-3f2e93f25f1b",
+                    "x-api-key": TON_BOT_API_KEY,
                 },
             }
         )
-        .catch((error: any) =>
+        .catch((error: unknown) => {
+            const err = error as { response?: { data?: { details?: string } }, message?: string };
             console.error(
                 "Error sending notification message:",
-                error?.response?.data?.details || error.message
-            )
-        );
+                err?.response?.data?.details || err.message
+            );
+        });
 };
