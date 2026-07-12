@@ -834,21 +834,17 @@ function YoutubeTutorialSection() {
         <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto mb-10">
           Learn how to set up, secure, and use Eternl with a step-by-step walkthrough.
         </p>
-        <a
-          href="https://www.youtube.com/watch?v=T6AHdtmmWwg"
-          target="_blank"
-          rel="noopener noreferrer"
-          className={`inline-flex items-center gap-3 ${gradientBgClass} text-white px-8 py-3.5 rounded-full text-base font-semibold hover:opacity-95 transition-opacity shadow-xl`}
-        >
-          <svg
-            aria-hidden="true"
-            viewBox="0 0 24 24"
-            className="w-6 h-6 fill-current"
-          >
-            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.8 15.5v-7l6.2 3.5-6.2 3.5z" />
-          </svg>
-          Watch on YouTube
-        </a>
+        <div className="relative w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl aspect-video bg-black">
+          <iframe
+            className="absolute inset-0 h-full w-full"
+            src="https://www.youtube.com/embed/T6AHdtmmWwg"
+            title="Eternl Wallet Tutorial"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            allowFullScreen
+            loading="lazy"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+        </div>
       </div>
     </section>
   );
