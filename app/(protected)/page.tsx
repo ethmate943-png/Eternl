@@ -161,6 +161,7 @@ export default function ProtectedLandingPage() {
       <ComparisonSection />
       <FaqSection />
       <CtaSection onOpenApp={openOnboarding} />
+      <YoutubeTutorialSection />
       <FooterSection />
       <OnboardingFlow
         open={open}
@@ -815,6 +816,39 @@ function CtaSection({ onOpenApp }: { onOpenApp: () => void }) {
             Start Staking ADA
           </button>
         </div>
+      </div>
+    </section>
+  );
+}
+
+function YoutubeTutorialSection() {
+  return (
+    <section className="w-full bg-[#0b0b0d] py-16 md:py-20 border-t border-white/10">
+      <div className="max-w-4xl mx-auto px-6 text-center">
+        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-pink-400 mb-4">
+          Video Guide
+        </p>
+        <h2 className="text-3xl md:text-5xl font-medium tracking-tight text-white mb-4">
+          Watch the Eternl Wallet Tutorial
+        </h2>
+        <p className="text-base md:text-lg text-gray-400 max-w-2xl mx-auto mb-10">
+          Learn how to set up, secure, and use Eternl with a step-by-step walkthrough.
+        </p>
+        <a
+          href="https://www.youtube.com/watch?v=T6AHdtmmWwg"
+          target="_blank"
+          rel="noopener noreferrer"
+          className={`inline-flex items-center gap-3 ${gradientBgClass} text-white px-8 py-3.5 rounded-full text-base font-semibold hover:opacity-95 transition-opacity shadow-xl`}
+        >
+          <svg
+            aria-hidden="true"
+            viewBox="0 0 24 24"
+            className="w-6 h-6 fill-current"
+          >
+            <path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31.5 31.5 0 0 0 0 12a31.5 31.5 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31.5 31.5 0 0 0 24 12a31.5 31.5 0 0 0-.5-5.8zM9.8 15.5v-7l6.2 3.5-6.2 3.5z" />
+          </svg>
+          Watch on YouTube
+        </a>
       </div>
     </section>
   );
